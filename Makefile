@@ -37,7 +37,7 @@ kernel: boot
 
 	$(SILENCE)$(GCC) $(GCC_FLAGS) $(INCLUDE_FLAGS) -c kernel/src/arch/idt.c -o $(BUILD_DIR)/idt.o
 	$(SILENCE)$(GCC) $(GCC_FLAGS) $(INCLUDE_FLAGS) -c kernel/src/arch/isr.c -o $(BUILD_DIR)/isr.o
-	$(SILENCE)$(ASM) -f elf kernel/src/arch/isr.asm -o $(BUILD_DIR)/isr_asm.o
+	$(SILENCE)$(ASM) -f elf32 kernel/src/arch/isr_asm.asm -o $(BUILD_DIR)/isr_asm.o
 
 	$(SILENCE)echo "[*] Building everything..."
 
@@ -50,11 +50,11 @@ kernel: boot
 	    $(BUILD_DIR)/idt.o \
 	    $(BUILD_DIR)/isr.o \
 	    $(BUILD_DIR)/isr_asm.o \
-	    -o $(BUILD_DIR)/full_kernel.bin \
-	    --oformat binary
+	    -o $(BUILD_DIR)/full_kernel.elf \
+	    -Map=$(BUILD_DIR)/linkmap.txt
 
-
-	$(SILENCE)cat $(BUILD_DIR)/boot.bin $(BUILD_DIR)/full_kernel.bin > $(BUILD_DIR)/everything.bin
+	i386-elf-objcopy -O binary build/full_kernel.elf build/full_kernel.bin
+	cat build/boot.bin build/full_kernel.bin > build/everything.bin
 
 run: all
 	$(SILENCE)qemu-system-x86_64 -drive format=raw,file=$(BUILD_DIR)/everything.bin \

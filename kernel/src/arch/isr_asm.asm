@@ -1,13 +1,14 @@
 bits 32
 
+section .text
 extern i686_ISR_Handler
 
 %macro isr_noerror 1
 global i686_ISR%1
 i686_ISR%1:
     cli
-    push dword 0
-    push dword %1
+    push byte 0
+    push byte %1
     call isr_common
 %endmacro
 
@@ -15,7 +16,7 @@ i686_ISR%1:
 global i686_ISR%1
 i686_ISR%1:
     cli
-    push dword %1
+    push byte %1
     call isr_common
 %endmacro
 
@@ -36,7 +37,7 @@ isr_error 13   ; 13 - General Protection Fault
 isr_error 14   ; 14 - Page Fault
 isr_noerror 15 ; 15 - (Reserved)
 isr_noerror 16 ; 16 - x87 Floating-Point Exception
-isr_error 17   ; 17 - Alignment Check
+isr_noerror 17 ; 17 - Alignment Check
 isr_noerror 18 ; 18 - Machine Check
 isr_noerror 19 ; 19 - SIMD Floating-Point Exception
 isr_noerror 20 ; 20 - Virtualization Exception
@@ -56,22 +57,23 @@ isr_noerror 31
 
 isr_common:
     pusha
-    push ds
-    push es
-    push fs
-    push gs
-
+    mov ax, ds
+    push eax
     mov ax, 0x10
     mov ds, ax
     mov es, ax
     mov fs, ax
     mov gs, ax
-
-    call i686_ISR_Handler
-
-    pop gs
-    pop fs
-    pop es
-    pop ds
+    
+    jmp i686_ISR_Handler
+    
+    pop eax
+    mov ds, ax
+    mov es, ax
+    mov fs, ax
+    mov gs, ax
+    
     popa
-    ret
+    add esp, 8
+    sti
+    iret

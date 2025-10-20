@@ -1,4 +1,6 @@
 #include "arch/idt.h"
+#include "core/format.h"
+#include "core/print.h"
 
 extern void i686_ISR0();
 extern void i686_ISR1();
@@ -35,10 +37,10 @@ extern void i686_ISR31();
 
 struct idt_entry {
     uint16_t offset_low;
-    uint16_t offset_high;
     uint16_t selector;
-    uint8_t type_attr;
-    uint8_t zero;
+    uint8_t  zero;
+    uint8_t  type_attr;
+    uint16_t offset_high;
 } __attribute__((packed));
 
 struct idt_pointer {
@@ -47,25 +49,25 @@ struct idt_pointer {
 } __attribute__((packed));
 
 static void (*isr_table[32])() = {
-    i686_ISR0,  i686_ISR1,  i686_ISR2,  i686_ISR3,
-    i686_ISR4,  i686_ISR5,  i686_ISR6,  i686_ISR7,
-    i686_ISR8,  i686_ISR9,  i686_ISR10, i686_ISR11,
-    i686_ISR12, i686_ISR13, i686_ISR14, i686_ISR15,
-    i686_ISR16, i686_ISR17, i686_ISR18, i686_ISR19,
-    i686_ISR20, i686_ISR21, i686_ISR22, i686_ISR23,
-    i686_ISR24, i686_ISR25, i686_ISR26, i686_ISR27,
-    i686_ISR28, i686_ISR29, i686_ISR30, i686_ISR31
+   i686_ISR0,  i686_ISR1,  i686_ISR2,  i686_ISR3,
+   i686_ISR4,  i686_ISR5,  i686_ISR6,  i686_ISR7,
+   i686_ISR8,  i686_ISR9,  i686_ISR10, i686_ISR11,
+   i686_ISR12, i686_ISR13, i686_ISR14, i686_ISR15,
+   i686_ISR16, i686_ISR17, i686_ISR18, i686_ISR19,
+   i686_ISR20, i686_ISR21, i686_ISR22, i686_ISR23,
+   i686_ISR24, i686_ISR25, i686_ISR26, i686_ISR27,
+   i686_ISR28, i686_ISR29, i686_ISR30, i686_ISR31
 };
 
-struct idt_entry idt[256];
-struct idt_pointer idt_p;
+struct idt_entry idt[256] __attribute__((aligned(16)));
+struct idt_pointer idt_p __attribute__((aligned(16)));
 
 void set_idt_entry(uint8_t num, uint32_t base, uint16_t sel, uint8_t flags) {
     idt[num].offset_low  = base & 0xFFFF;
-    idt[num].offset_high = (base >> 16) & 0xFFFF;
     idt[num].selector    = sel;
     idt[num].zero        = 0;
     idt[num].type_attr   = flags;
+    idt[num].offset_high = (base >> 16) & 0xFFFF;
 }
 
 void idt_init(){
@@ -74,7 +76,14 @@ void idt_init(){
 
     for (int i = 0; i < 32; i++) {
         set_idt_entry(i, (uint32_t)isr_table[i], 0x08, 0x8E);
+        char buffer[3];
+        int_to_ascii(i, buffer);
+        print(buffer, COLOR_WHITE, COLOR_BLACK);
+        char separator[] = "|";
+        print(separator, COLOR_LIGHT_BLUE, COLOR_BLACK);
     }
+    new_line();
 
     asm volatile("lidt (%0)" : : "r" (&idt_p));
+
 }
