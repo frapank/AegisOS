@@ -5,24 +5,10 @@ LD  = i386-elf-ld
 BUILD_DIR = build
 BOOT_DIR  = boot
 INC_DIR   = kernel/include
-KERNEL_LOCATION = 0x1000
 LINK_FILE = link.ld
 
-GCC_FLAGS = -ffreestanding -m32 -g
+GCC_FLAGS = -ffreestanding -m32
 INCLUDE_FLAGS = -I$(INC_DIR)
-
-SRC_FILES = \
-	kernel/src/kernel.c \
-	kernel/src/core/format.c \
-	kernel/src/core/print.c \
-	kernel/src/drivers/keyboard.c
-
-OBJ_FILES = $(patsubst kernel/src/%.c,$(BUILD_DIR)/%.o,$(SRC_FILES))
-
-KERNEL_ENTRY_ASM = $(BOOT_DIR)/kernel_entry.asm
-KERNEL_ENTRY_OBJ = $(BUILD_DIR)/kernel_entry.o
-
-BOOT_BIN = $(BUILD_DIR)/boot.bin
 
 ifeq ($(v),1)
 	SILENCE :=
@@ -30,31 +16,45 @@ else
 	SILENCE := @
 endif
 
-all: boot
+all: boot kernel
 
-boot: $(BUILD_DIR)/everything.bin
-
-$(BUILD_DIR)/everything.bin: $(KERNEL_ENTRY_OBJ) $(BOOT_BIN) $(OBJ_FILES)
-	$(SILENCE)echo "[*] Building everything..."
-	$(SILENCE)mkdir -p $(BUILD_DIR)
-	$(SILENCE)$(LD) -T $(LINK_FILE) $(KERNEL_ENTRY_OBJ) $(OBJ_FILES) -o $(BUILD_DIR)/full_kernel.bin --oformat binary
-	$(SILENCE)cat $(BOOT_BIN) $(BUILD_DIR)/full_kernel.bin > $(BUILD_DIR)/everything.bin
-
-$(BUILD_DIR)/kernel_entry.o: $(KERNEL_ENTRY_ASM)
+boot:
 	$(SILENCE)echo "[*] Assembling kernel_entry..."
-	$(SILENCE)mkdir -p $(dir $@)
-	$(SILENCE)$(ASM) $< -f elf -o $@
+	$(SILENCE)mkdir -p $(BUILD_DIR)
+	$(SILENCE)$(ASM) $(BOOT_DIR)/kernel_entry.asm -f elf -o $(BUILD_DIR)/kernel_entry.o
 
-$(BUILD_DIR)/boot.bin: $(BOOT_DIR)/boot.asm
 	$(SILENCE)echo "[*] Assembling boot.bin..."
-	$(SILENCE)mkdir -p $(dir $@)
-	$(SILENCE)$(ASM) -f bin $< -o $@
+	$(SILENCE)mkdir -p $(BUILD_DIR)
+	$(SILENCE)$(ASM) -f bin $(BOOT_DIR)/boot.asm -o $(BUILD_DIR)/boot.bin
 
-$(BUILD_DIR)/%.o: kernel/src/%.c
-	$(SILENCE)echo "[*] Compiling $< ..."
-	$(SILENCE)mkdir -p $(dir $@)
-	$(SILENCE)$(GCC) $(GCC_FLAGS) $(INCLUDE_FLAGS) -c $< -o $@
+kernel: boot
 
+	$(SILENCE)echo "[*] Compiling kernel/src/*.c-asm -> $(BUILD_DIR)/ ..."
+	$(SILENCE)$(GCC) $(GCC_FLAGS) $(INCLUDE_FLAGS) -c kernel/src/kernel.c -o $(BUILD_DIR)/kernel.o
+	$(SILENCE)$(GCC) $(GCC_FLAGS) $(INCLUDE_FLAGS) -c kernel/src/core/format.c -o $(BUILD_DIR)/format.o
+	$(SILENCE)$(GCC) $(GCC_FLAGS) $(INCLUDE_FLAGS) -c kernel/src/core/print.c -o $(BUILD_DIR)/print.o
+	$(SILENCE)$(GCC) $(GCC_FLAGS) $(INCLUDE_FLAGS) -c kernel/src/drivers/keyboard.c -o $(BUILD_DIR)/keyboard.o
+
+	$(SILENCE)$(GCC) $(GCC_FLAGS) $(INCLUDE_FLAGS) -c kernel/src/arch/idt.c -o $(BUILD_DIR)/idt.o
+	$(SILENCE)$(GCC) $(GCC_FLAGS) $(INCLUDE_FLAGS) -c kernel/src/arch/isr.c -o $(BUILD_DIR)/isr.o
+	$(SILENCE)$(ASM) -f elf32 kernel/src/arch/isr_asm.asm -o $(BUILD_DIR)/isr_asm.o
+
+	$(SILENCE)echo "[*] Building everything..."
+
+	$(SILENCE)$(LD) -T $(LINK_FILE) \
+	    $(BUILD_DIR)/kernel_entry.o \
+	    $(BUILD_DIR)/kernel.o \
+	    $(BUILD_DIR)/format.o \
+	    $(BUILD_DIR)/print.o \
+	    $(BUILD_DIR)/keyboard.o \
+	    $(BUILD_DIR)/idt.o \
+	    $(BUILD_DIR)/isr.o \
+	    $(BUILD_DIR)/isr_asm.o \
+	    -o $(BUILD_DIR)/full_kernel.elf \
+	    -Map=$(BUILD_DIR)/linkmap.txt
+
+	i386-elf-objcopy -O binary build/full_kernel.elf build/full_kernel.bin
+	cat build/boot.bin build/full_kernel.bin > build/everything.bin
 
 run: all
 	$(SILENCE)qemu-system-x86_64 -drive format=raw,file=$(BUILD_DIR)/everything.bin \
@@ -64,5 +64,6 @@ clean:
 	$(SILENCE)echo "[*] Cleaning..."
 	$(SILENCE)rm -rf $(BUILD_DIR)
 
-.PHONY: all boot run clean
+.PHONY: all boot kernel run clean
+
 
