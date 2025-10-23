@@ -16,3 +16,16 @@ void int_to_ascii(int n, char* buffer){
     buffer[i] = 0;
 }
 
+void uint_to_hex(uint32_t n, char* buffer) {
+    buffer[0] = '0';
+    buffer[1] = 'x';
+
+    for (int i = 0; i < 8; i++) {
+        uint8_t nibble = (n >> (28 - i * 4)) & 0xF;
+        if (nibble < 10)
+            buffer[2 + i] = '0' + nibble;
+        else
+            buffer[2 + i] = 'A' + (nibble - 10);
+    }
+    buffer[10] = '\0';
+}
