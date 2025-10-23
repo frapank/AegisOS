@@ -76,11 +76,6 @@ void idt_init(){
 
     for (int i = 0; i < 32; i++) {
         set_idt_entry(i, (uint32_t)isr_table[i], 0x08, 0x8E);
-        char buffer[3];
-        int_to_ascii(i, buffer);
-        print(buffer, COLOR_WHITE, COLOR_BLACK);
-        char separator[] = "|";
-        print(separator, COLOR_LIGHT_BLUE, COLOR_BLACK);
     }
     new_line();
 
