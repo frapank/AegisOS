@@ -2,11 +2,11 @@
 #include "core/print.h"
 
 void kernel_main() {
-
     idt_init();
-    print("Welcome to your personal os!\n");
 
-    for(;;);
+    clear_screen();
+    print("Welcome to your personal os!\n");
+    for (;;);
 
     return;
 }
