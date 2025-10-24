@@ -4,6 +4,7 @@
 #define VIDEO_MEMORY 0xb8000
 #define VGA_WIDTH 80
 #define VGA_HEIGHT 25
+#define DEFAULT_ATT 0
 
 enum vga_color {
     VGA_COLOR_BLACK = 0,
