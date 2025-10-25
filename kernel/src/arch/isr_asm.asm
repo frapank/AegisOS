@@ -2,7 +2,9 @@ bits 32
 
 section .text
 extern i686_ISR_Handler
+extern i686_IRQ_Handler
 
+; --- ISR ---
 %macro isr_noerror 1
 global i686_ISR%1
 i686_ISR%1:
@@ -54,6 +56,56 @@ isr_noerror 28
 isr_noerror 29
 isr_noerror 30
 isr_noerror 31
+
+; --- IRQ ---
+%macro irq_noerror 1
+global i686_IRQ%1
+i686_IRQ%1:
+    cli
+    push byte 0
+    push byte %1
+    call irq_common
+%endmacro
+
+irq_noerror 0  ; IRQ0  - timer (PIT)
+irq_noerror 1  ; IRQ1  - keyboard
+irq_noerror 2  ; IRQ2  - cascade
+irq_noerror 3
+irq_noerror 4
+irq_noerror 5
+irq_noerror 6
+irq_noerror 7
+irq_noerror 8  ; IRQ8  - rtc (onboard)
+irq_noerror 9
+irq_noerror 10
+irq_noerror 11
+irq_noerror 12 ; PS/2 mouse
+irq_noerror 13
+irq_noerror 14 ; primary ATA
+irq_noerror 15 ; secondary ATA
+
+irq_common:
+    pusha
+    mov ax, ds
+    push eax
+    mov ax, 0x10
+    mov ds, ax
+    mov es, ax
+    mov fs, ax
+    mov gs, ax
+    
+    jmp i686_IRQ_Handler
+    
+    pop eax
+    mov ds, ax
+    mov es, ax
+    mov fs, ax
+    mov gs, ax
+    
+    popa
+    add esp, 8
+    sti
+    iret
 
 isr_common:
     pusha
