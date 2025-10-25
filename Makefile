@@ -30,6 +30,7 @@ kernel: boot
 
 	$(GCC) $(GCC_FLAGS) $(INCLUDE_FLAGS) -c kernel/src/arch/idt.c -o $(BUILD_DIR)/idt.o
 	$(GCC) $(GCC_FLAGS) $(INCLUDE_FLAGS) -c kernel/src/arch/isr.c -o $(BUILD_DIR)/isr.o
+	$(GCC) $(GCC_FLAGS) $(INCLUDE_FLAGS) -c kernel/src/arch/irq.c -o $(BUILD_DIR)/irq.o
 	$(ASM) -f elf32 kernel/src/arch/isr_asm.asm -o $(BUILD_DIR)/isr_asm.o
 
 	$(LD) -T $(LINK_FILE) \
@@ -40,6 +41,7 @@ kernel: boot
 	    $(BUILD_DIR)/vga.o \
 		$(BUILD_DIR)/idt.o \
 	    $(BUILD_DIR)/isr.o \
+	    $(BUILD_DIR)/irq.o \
 	    $(BUILD_DIR)/isr_asm.o \
 	    -o $(BUILD_DIR)/full_kernel.elf \
 	    -Map=$(BUILD_DIR)/linkmap.txt

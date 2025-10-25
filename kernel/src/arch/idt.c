@@ -1,6 +1,4 @@
 #include "arch/idt.h"
-#include "core/format.h"
-#include "core/print.h"
 
 extern void i686_ISR0();
 extern void i686_ISR1();
@@ -35,6 +33,23 @@ extern void i686_ISR29();
 extern void i686_ISR30();
 extern void i686_ISR31();
 
+extern void i686_IRQ0();
+extern void i686_IRQ1();
+extern void i686_IRQ2();
+extern void i686_IRQ3();
+extern void i686_IRQ4();
+extern void i686_IRQ5();
+extern void i686_IRQ6();
+extern void i686_IRQ7();
+extern void i686_IRQ8();
+extern void i686_IRQ9();
+extern void i686_IRQ10();
+extern void i686_IRQ11();
+extern void i686_IRQ12();
+extern void i686_IRQ13();
+extern void i686_IRQ14();
+extern void i686_IRQ15();
+
 struct idt_entry {
     uint16_t offset_low;
     uint16_t selector;
@@ -59,6 +74,13 @@ static void (*isr_table[32])() = {
    i686_ISR28, i686_ISR29, i686_ISR30, i686_ISR31
 };
 
+static void (*irq_table[16])() = {
+    i686_IRQ0, i686_IRQ1, i686_IRQ2, i686_IRQ3,
+    i686_IRQ4, i686_IRQ5, i686_IRQ6, i686_IRQ7,
+    i686_IRQ8, i686_IRQ9, i686_IRQ10, i686_IRQ11,
+    i686_IRQ12, i686_IRQ13, i686_IRQ14, i686_IRQ15
+};
+
 struct idt_entry idt[256] __attribute__((aligned(16)));
 struct idt_pointer idt_p __attribute__((aligned(16)));
 
@@ -74,10 +96,24 @@ void idt_init(){
     idt_p.limit = sizeof(idt) - 1;
     idt_p.base = (uint32_t)&idt;
 
+    // Clear idt
+    for (int i = 0; i < 256; i++) {
+        idt[i].offset_low = 0;
+        idt[i].selector = 0;
+        idt[i].zero = 0;
+        idt[i].type_attr = 0;
+        idt[i].offset_high = 0;
+    }
+
+    // Set isr
     for (int i = 0; i < 32; i++) {
         set_idt_entry(i, (uint32_t)isr_table[i], 0x08, 0x8E);
     }
-    new_line();
+
+    // Set irq
+    for (int i = 0; i < 16; i++) {
+        set_idt_entry(0x20 + i, (uint32_t)irq_table[i], 0x08, 0x8E);
+    }
 
     asm volatile("lidt (%0)" : : "r" (&idt_p));
 
