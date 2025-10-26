@@ -1,7 +1,7 @@
 bits 32
 
 section .text
-extern i686_ISR_Handler
+extern i686_ISR_Handler 
 extern i686_IRQ_Handler
 
 ; --- ISR ---
@@ -9,17 +9,17 @@ extern i686_IRQ_Handler
 global i686_ISR%1
 i686_ISR%1:
     cli
-    push byte 0
-    push byte %1
-    call isr_common
+    push dword 0
+    push dword %1
+    jmp isr_common
 %endmacro
 
 %macro isr_error 1
 global i686_ISR%1
 i686_ISR%1:
     cli
-    push byte %1
-    call isr_common
+    push dword %1
+    jmp isr_common
 %endmacro
 
 isr_noerror 0  ; 0  - Divide Error
@@ -62,8 +62,8 @@ isr_noerror 31
 global i686_IRQ%1
 i686_IRQ%1:
     cli
-    push byte 0
-    push byte %1
+    push dword 0
+    push dword %1
     call irq_common
 %endmacro
 
@@ -84,48 +84,81 @@ irq_noerror 13
 irq_noerror 14 ; primary ATA
 irq_noerror 15 ; secondary ATA
 
-irq_common:
+isr_common:
     pusha
-    mov ax, ds
+    mov eax, ds
     push eax
+    mov eax, es
+    push eax
+    mov eax, fs
+    push eax
+    mov eax, gs
+    push eax
+
     mov ax, 0x10
     mov ds, ax
     mov es, ax
     mov fs, ax
     mov gs, ax
-    
-    jmp i686_IRQ_Handler
-    
+
+    mov eax, esp
+    push eax
+    call i686_ISR_Handler
+    add esp, 4
+
+    pop eax
+    mov gs, ax
+    pop eax
+    mov fs, ax
+    pop eax
+    mov es, ax
     pop eax
     mov ds, ax
-    mov es, ax
-    mov fs, ax
-    mov gs, ax
-    
+
     popa
+
     add esp, 8
     sti
     iret
 
-isr_common:
+irq_common:
     pusha
-    mov ax, ds
+
+    mov eax, ds
     push eax
+    mov eax, es
+    push eax
+    mov eax, fs
+    push eax
+    mov eax, gs
+    push eax
+
     mov ax, 0x10
     mov ds, ax
     mov es, ax
     mov fs, ax
     mov gs, ax
-    
-    jmp i686_ISR_Handler
-    
+
+    mov eax, esp
+    push eax
+    call i686_IRQ_Handler
+    add esp, 4
+
+    pop eax
+    mov gs, ax
+    pop eax
+    mov fs, ax
+    pop eax
+    mov es, ax
     pop eax
     mov ds, ax
-    mov es, ax
-    mov fs, ax
-    mov gs, ax
-    
+
     popa
     add esp, 8
+
+    mov al, 0x20
+    out 0x20, al
+
     sti
     iret
+
