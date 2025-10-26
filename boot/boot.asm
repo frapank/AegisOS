@@ -86,7 +86,7 @@ read_disk:
     mov bx, KERNEL_LOCATION
 
     mov ah, 0x02
-    mov al, 5
+    mov al, 7
     mov ch, 0x00
     mov cl, 0x02
     mov dh, 0x00
