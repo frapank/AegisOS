@@ -1,4 +1,4 @@
-#include "arch/idt.h"
+#include "arch/interrupts/idt.h"
 
 extern void i686_ISR0();
 extern void i686_ISR1();
