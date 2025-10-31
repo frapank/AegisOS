@@ -1,4 +1,4 @@
-#include "arch/idt.h"
+#include "arch/interrupts/idt.h"
 #include "core/print.h"
 
 void kernel_main() {
