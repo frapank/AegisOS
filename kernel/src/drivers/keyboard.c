@@ -1,5 +1,5 @@
 #include "drivers/keyboard.h"
-#include "arch/bus.h"
+#include "arch/io.h"
 
 static const enum key scancode_map[256] = {
     [0x01] = KEY_ESC,
