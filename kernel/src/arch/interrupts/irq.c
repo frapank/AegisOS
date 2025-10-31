@@ -1,4 +1,4 @@
-#include "arch/irq.h"
+#include "arch/interrupts/irq.h"
 #include "core/print.h"
 #include <stdint.h>
 

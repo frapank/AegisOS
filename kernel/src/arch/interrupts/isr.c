@@ -1,4 +1,4 @@
-#include "arch/isr.h"
+#include "arch/interrupts/isr.h"
 #include "core/print.h"
 #include "drivers/vga.h"
 
