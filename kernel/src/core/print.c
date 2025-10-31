@@ -1,6 +1,7 @@
 #include "core/print.h"
 
 #include "core/format.h"
+#include "core/memory.h"
 
 #define DEFAULT_BACKGROUND_COLOR 0
 #define DEFAULT_TEXT_COLOR 15
@@ -109,9 +110,8 @@ void clear_screen() {
     uint16_t* vga = (uint16_t*) VIDEO_MEMORY;
     uint16_t blank = (' ' | (DEFAULT_ATT << 8));
 
-    for (int i = 0; i < VGA_WIDTH * VGA_HEIGHT; i++) {
-        vga[i] = blank;
-    }
+    memset16(vga, blank, VGA_WIDTH * VGA_HEIGHT);
+
     cursor.x = 0;
     cursor.y = 0;
 }
