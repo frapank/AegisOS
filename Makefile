@@ -24,21 +24,25 @@ boot:
 
 kernel: boot
 
-	$(GCC) $(GCC_FLAGS) $(INCLUDE_FLAGS) -c $(SRC_DIR)/kernel.c      -o $(BUILD_DIR)/kernel.o
-	$(GCC) $(GCC_FLAGS) $(INCLUDE_FLAGS) -c $(SRC_DIR)/core/format.c -o $(BUILD_DIR)/format.o
-	$(GCC) $(GCC_FLAGS) $(INCLUDE_FLAGS) -c $(SRC_DIR)/core/print.c  -o $(BUILD_DIR)/print.o
-	$(GCC) $(GCC_FLAGS) $(INCLUDE_FLAGS) -c $(SRC_DIR)/drivers/vga.c -o $(BUILD_DIR)/vga.o
-	$(GCC) $(GCC_FLAGS) $(INCLUDE_FLAGS) -c $(SRC_DIR)/arch/idt.c    -o $(BUILD_DIR)/idt.o
-	$(GCC) $(GCC_FLAGS) $(INCLUDE_FLAGS) -c $(SRC_DIR)/arch/isr.c    -o $(BUILD_DIR)/isr.o
-	$(GCC) $(GCC_FLAGS) $(INCLUDE_FLAGS) -c $(SRC_DIR)/arch/irq.c    -o $(BUILD_DIR)/irq.o
-	$(ASM) -f elf32 $(ASM_DFLAGS)           $(SRC_DIR)/arch/isr.asm  -o $(BUILD_DIR)/isr_asm.o
+	$(GCC) $(GCC_FLAGS) $(INCLUDE_FLAGS) -c $(SRC_DIR)/kernel.c                 -o $(BUILD_DIR)/kernel.o
+	$(GCC) $(GCC_FLAGS) $(INCLUDE_FLAGS) -c $(SRC_DIR)/core/format.c            -o $(BUILD_DIR)/format.o
+	$(GCC) $(GCC_FLAGS) $(INCLUDE_FLAGS) -c $(SRC_DIR)/core/print.c             -o $(BUILD_DIR)/print.o
+	$(GCC) $(GCC_FLAGS) $(INCLUDE_FLAGS) -c $(SRC_DIR)/core/memory.c            -o $(BUILD_DIR)/memory.o
+	$(GCC) $(GCC_FLAGS) $(INCLUDE_FLAGS) -c $(SRC_DIR)/drivers/vga.c            -o $(BUILD_DIR)/vga.o
+	$(GCC) $(GCC_FLAGS) $(INCLUDE_FLAGS) -c $(SRC_DIR)/arch/io.c                -o $(BUILD_DIR)/io.o
+	$(GCC) $(GCC_FLAGS) $(INCLUDE_FLAGS) -c $(SRC_DIR)/arch/interrupts/idt.c    -o $(BUILD_DIR)/idt.o
+	$(GCC) $(GCC_FLAGS) $(INCLUDE_FLAGS) -c $(SRC_DIR)/arch/interrupts/isr.c    -o $(BUILD_DIR)/isr.o
+	$(GCC) $(GCC_FLAGS) $(INCLUDE_FLAGS) -c $(SRC_DIR)/arch/interrupts/irq.c    -o $(BUILD_DIR)/irq.o
+	$(ASM) -f elf32 $(ASM_DFLAGS)           $(SRC_DIR)/arch/interrupts/isr.asm  -o $(BUILD_DIR)/isr_asm.o
 
 	$(LD) -T $(LINK_FILE) \
 	    $(BUILD_DIR)/kernel_entry.o \
 	    $(BUILD_DIR)/kernel.o \
 	    $(BUILD_DIR)/format.o \
 	    $(BUILD_DIR)/print.o \
+		$(BUILD_DIR)/memory.o \
 	    $(BUILD_DIR)/vga.o \
+		$(BUILD_DIR)/io.o \
 		$(BUILD_DIR)/idt.o \
 	    $(BUILD_DIR)/isr.o \
 	    $(BUILD_DIR)/irq.o \
