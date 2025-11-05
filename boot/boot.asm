@@ -8,6 +8,7 @@ org 0x7c00
 
 start:
 
+    cli
     ; Set Stack
     mov ax, 0x9000
     mov ss, ax
@@ -31,6 +32,7 @@ start:
 
     call read_disk
     call start_protected
+    sti
 
 ;----------------
 ; Data
@@ -72,8 +74,10 @@ clear_screen:
     ret
 
 wait_key:
+    sti
     mov ah, 0x00
     int 0x16
+    cli
     ret
 
 ;------------------
