@@ -7,8 +7,8 @@ section .text
     bits 32
 
 _start:
+    cli ; Will enable the interrupts after the pid_init()
     call kernel_main
-
     cli
 .halt_loop:
     hlt
