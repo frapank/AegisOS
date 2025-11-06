@@ -63,8 +63,8 @@ global i686_IRQ%1
 i686_IRQ%1:
     cli
     push dword 0
-    push dword %1
-    call irq_common
+    push dword (32 + %1)
+    jmp irq_common
 %endmacro
 
 irq_noerror 0  ; IRQ0  - timer (PIT)
@@ -118,7 +118,6 @@ isr_common:
     popa
 
     add esp, 8
-    sti
     iret
 
 irq_common:
@@ -144,6 +143,16 @@ irq_common:
     call i686_IRQ_Handler
     add esp, 4
 
+    mov ebx, [esp + 48]    ; ebx = int_no
+    cmp ebx, 0x28          ; if >= 0x28 (40) is IRQ del slave (remapped base 0x20)
+    jb .send_master_only
+
+    mov al, 0x20
+    out 0xA0, al
+.send_master_only:
+    mov al, 0x20
+    out 0x20, al
+
     pop eax
     mov gs, ax
     pop eax
@@ -156,9 +165,5 @@ irq_common:
     popa
     add esp, 8
 
-    mov al, 0x20
-    out 0x20, al
-
-    sti
     iret
 
