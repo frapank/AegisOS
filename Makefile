@@ -30,6 +30,7 @@ kernel: boot
 	$(GCC) $(GCC_FLAGS) $(INCLUDE_FLAGS) -c $(SRC_DIR)/core/memory.c            -o $(BUILD_DIR)/memory.o
 	$(GCC) $(GCC_FLAGS) $(INCLUDE_FLAGS) -c $(SRC_DIR)/drivers/vga.c            -o $(BUILD_DIR)/vga.o
 	$(GCC) $(GCC_FLAGS) $(INCLUDE_FLAGS) -c $(SRC_DIR)/arch/io.c                -o $(BUILD_DIR)/io.o
+	$(GCC) $(GCC_FLAGS) $(INCLUDE_FLAGS) -c $(SRC_DIR)/arch/pic.c               -o $(BUILD_DIR)/pic.o
 	$(GCC) $(GCC_FLAGS) $(INCLUDE_FLAGS) -c $(SRC_DIR)/arch/interrupts/idt.c    -o $(BUILD_DIR)/idt.o
 	$(GCC) $(GCC_FLAGS) $(INCLUDE_FLAGS) -c $(SRC_DIR)/arch/interrupts/isr.c    -o $(BUILD_DIR)/isr.o
 	$(GCC) $(GCC_FLAGS) $(INCLUDE_FLAGS) -c $(SRC_DIR)/arch/interrupts/irq.c    -o $(BUILD_DIR)/irq.o
@@ -46,6 +47,7 @@ kernel: boot
 		$(BUILD_DIR)/idt.o \
 	    $(BUILD_DIR)/isr.o \
 	    $(BUILD_DIR)/irq.o \
+	    $(BUILD_DIR)/pic.o \
 	    $(BUILD_DIR)/isr_asm.o \
 	    -o $(BUILD_DIR)/full_kernel.elf \
 	    -Map=$(BUILD_DIR)/linkmap.txt
