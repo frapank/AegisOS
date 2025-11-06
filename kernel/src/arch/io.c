@@ -29,3 +29,11 @@ void outw(uint16_t port, uint16_t value) {
 void outl(uint16_t port, uint32_t value) {
     __asm__ volatile("outl %0, %1" : : "a"(value), "Nd"(port));
 }
+
+void cli(){
+    __asm__ volatile("cli");
+}
+
+void sti(){
+    __asm__ volatile("sti");
+}
