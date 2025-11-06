@@ -9,8 +9,31 @@
 static struct line_data cursor = {0, 0};
 
 static void scroll_if_needed() {
-    // Todo
+    if (cursor.y < VGA_HEIGHT) return;
+
+    uint16_t *vga = (uint16_t *) VIDEO_MEMORY;
+
+    int lines = cursor.y - (VGA_HEIGHT - 1);
+    if (lines <= 0) return;
+    if (lines > VGA_HEIGHT) lines = VGA_HEIGHT;
+
+    uint32_t bytes_per_row = VGA_WIDTH * sizeof(uint16_t);
+    uint32_t src_offset = lines * bytes_per_row;
+    uint32_t move_bytes = (VGA_HEIGHT * bytes_per_row) - src_offset;
+
+    memmove((void *)vga, (void *)((uint8_t*)vga + src_offset), move_bytes);
+
+    uint8_t att = ((DEFAULT_BACKGROUND_COLOR & 0x0F) << 4) | (DEFAULT_TEXT_COLOR & 0x0F);
+    uint16_t blank = (' ' | (att << 8));
+
+    uint16_t *last_row = vga + (VGA_HEIGHT - lines) * VGA_WIDTH;
+    for (int r = 0; r < lines; r++) {
+        memset16(last_row + r * VGA_WIDTH, blank, VGA_WIDTH);
+    }
+
+    cursor.y = VGA_HEIGHT - 1;
 }
+
 
 void print_color(char *msg, enum vga_color text, enum vga_color background,
                  ...) {
