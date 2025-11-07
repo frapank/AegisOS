@@ -3,7 +3,7 @@
 #include "drivers/vga.h"
 
 char* exception_names[32] = {
-    "0: Zero for zero division",
+    "0: Division for zero",
     "1: Debug",
     "2: Non maskable interrupt (NMI)",
     "3: Breakpoint",
@@ -85,7 +85,7 @@ void (*isr_handlers[32])(struct regs*) = {
 };
 
 void default_isr_handler(struct regs* regs){
-    print_color("Unhandled isr %d: %s...\n", VGA_COLOR_LIGHT_RED, VGA_COLOR_BLACK, regs->int_no, exception_names[regs->int_no]);
+    print_color("Unhandled isr %s...\n", VGA_COLOR_LIGHT_RED, VGA_COLOR_BLACK, exception_names[regs->int_no]);
     for (;;) { asm volatile("hlt"); } // Todo: Remove when panic are added
 }
 
