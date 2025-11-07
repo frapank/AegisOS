@@ -1,6 +1,7 @@
 #ifndef VGA_H
 #define VGA_H
 
+#include <stdint.h>
 #define VIDEO_MEMORY 0xb8000
 #define VGA_WIDTH 80
 #define VGA_HEIGHT 25
@@ -25,7 +26,9 @@ enum vga_color {
     VGA_COLOR_WHITE = 15,
 };
 
-void vga_put_char(unsigned char c, unsigned char forecolour,
-                unsigned char backcolour, int x, int y);
+void vga_put_char(uint8_t c, uint8_t forecolour,
+                  uint8_t backcolour, uint32_t x, uint32_t y);
+
+void vga_update_cursor(uint16_t x, uint16_t y);
 
 #endif 
