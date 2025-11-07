@@ -2,6 +2,7 @@
 
 #include "core/format.h"
 #include "core/memory.h"
+#include "drivers/vga.h"
 
 #define DEFAULT_BACKGROUND_COLOR 0
 #define DEFAULT_TEXT_COLOR 15
@@ -62,9 +63,18 @@ void vprint_color(char *msg, enum vga_color text, enum vga_color background,
                 break;
 
             case '\r':
+                vga_put_char(' ', text, background, cursor.x, cursor.y);
                 cursor.x = 0;
                 scroll_if_needed();
                 break;
+
+            case '\b':
+                if (cursor.x > 0) {
+                    cursor.x--;
+                    vga_put_char(' ', text, background, cursor.x, cursor.y);
+                }
+                break;
+
             case '%':
                 if (msg[i + 1] == 'd') {
                     int val = __builtin_va_arg(args, int);
