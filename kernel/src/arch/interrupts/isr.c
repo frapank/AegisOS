@@ -1,6 +1,5 @@
 #include "arch/interrupts/isr.h"
 #include "core/print.h"
-#include "drivers/vga.h"
 
 char* exception_names[32] = {
     "0: Division for zero",
@@ -85,7 +84,7 @@ void (*isr_handlers[32])(struct regs*) = {
 };
 
 void default_isr_handler(struct regs* regs){
-    print_color("Unhandled isr %s...\n", VGA_COLOR_LIGHT_RED, VGA_COLOR_BLACK, exception_names[regs->int_no]);
+    printk_color("Unhandled isr %s...\n", VGA_COLOR_LIGHT_RED, VGA_COLOR_BLACK, exception_names[regs->int_no]);
     for (;;) { asm volatile("hlt"); } // Todo: Remove when panic are added
 }
 
@@ -94,7 +93,7 @@ void __attribute__((cdecl)) i686_ISR_Handler(struct regs* regs) {
     if (num < 32) {
         isr_handlers[num](regs);
     } else {
-        print_color("Unknown interrupt number: %d\n", VGA_COLOR_LIGHT_RED, VGA_COLOR_BLACK, num);
+        printk_color("Unknown interrupt number: %d\n", VGA_COLOR_LIGHT_RED, VGA_COLOR_BLACK, num);
         for (;;) { asm volatile("hlt"); } // Todo: Remove when panic are added
     }
 }

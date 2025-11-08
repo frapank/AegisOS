@@ -28,7 +28,7 @@ kernel: boot
 	$(GCC) $(GCC_FLAGS) $(INCLUDE_FLAGS) -c $(SRC_DIR)/core/format.c            -o $(BUILD_DIR)/format.o
 	$(GCC) $(GCC_FLAGS) $(INCLUDE_FLAGS) -c $(SRC_DIR)/core/print.c             -o $(BUILD_DIR)/print.o
 	$(GCC) $(GCC_FLAGS) $(INCLUDE_FLAGS) -c $(SRC_DIR)/core/memory.c            -o $(BUILD_DIR)/memory.o
-	$(GCC) $(GCC_FLAGS) $(INCLUDE_FLAGS) -c $(SRC_DIR)/drivers/vga.c            -o $(BUILD_DIR)/vga.o
+	$(GCC) $(GCC_FLAGS) $(INCLUDE_FLAGS) -c $(SRC_DIR)/drivers/vga/vga.c            -o $(BUILD_DIR)/vga.o
 	$(GCC) $(GCC_FLAGS) $(INCLUDE_FLAGS) -c $(SRC_DIR)/drivers/keyboard.c       -o $(BUILD_DIR)/keyboard.o
 	$(GCC) $(GCC_FLAGS) $(INCLUDE_FLAGS) -c $(SRC_DIR)/arch/pic.c               -o $(BUILD_DIR)/pic.o
 	$(GCC) $(GCC_FLAGS) $(INCLUDE_FLAGS) -c $(SRC_DIR)/arch/interrupts/idt.c    -o $(BUILD_DIR)/idt.o
