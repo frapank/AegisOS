@@ -10,11 +10,11 @@ void kernel_main() {
     sti();
     
     clear_screen();
-    print("Welcome to your personal os!\n");
+    printk("Welcome to your personal os!\n");
     // Test 
     for (;;){
         char c = getch();
-        print("%c", c);
+        printk("%c", c);
     }
 
     return;
