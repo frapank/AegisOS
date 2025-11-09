@@ -1,0 +1,7 @@
+megs: 128
+romimage: file=/usr/local/share/bochs/BIOS-bochs-latest
+vgaromimage: file=/usr/local/share/bochs/VGABIOS-lgpl-latest.bin
+display_library: sdl2
+floppya: 1_44=build/everything.bin, status=inserted
+boot: a
+
