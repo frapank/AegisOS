@@ -1,54 +1,23 @@
 #include "arch/interrupts/idt.h"
 
-extern void i686_ISR0();
-extern void i686_ISR1();
-extern void i686_ISR2();
-extern void i686_ISR3();
-extern void i686_ISR4();
-extern void i686_ISR5();
-extern void i686_ISR6();
-extern void i686_ISR7();
-extern void i686_ISR8();
-extern void i686_ISR9();
-extern void i686_ISR10();
-extern void i686_ISR11();
-extern void i686_ISR12();
-extern void i686_ISR13();
-extern void i686_ISR14();
-extern void i686_ISR15();
-extern void i686_ISR16();
-extern void i686_ISR17();
-extern void i686_ISR18();
-extern void i686_ISR19();
-extern void i686_ISR20();
-extern void i686_ISR21();
-extern void i686_ISR22();
-extern void i686_ISR23();
-extern void i686_ISR24();
-extern void i686_ISR25();
-extern void i686_ISR26();
-extern void i686_ISR27();
-extern void i686_ISR28();
-extern void i686_ISR29();
-extern void i686_ISR30();
-extern void i686_ISR31();
+#define ISR_DECLARE(n) extern void i686_ISR##n(void)
+#define IRQ_DECLARE(n) extern void i686_IRQ##n(void)
 
-extern void i686_IRQ0();
-extern void i686_IRQ1();
-extern void i686_IRQ2();
-extern void i686_IRQ3();
-extern void i686_IRQ4();
-extern void i686_IRQ5();
-extern void i686_IRQ6();
-extern void i686_IRQ7();
-extern void i686_IRQ8();
-extern void i686_IRQ9();
-extern void i686_IRQ10();
-extern void i686_IRQ11();
-extern void i686_IRQ12();
-extern void i686_IRQ13();
-extern void i686_IRQ14();
-extern void i686_IRQ15();
+/* IRQ 0-31 */
+ISR_DECLARE(0);  ISR_DECLARE(1);  ISR_DECLARE(2);  ISR_DECLARE(3);
+ISR_DECLARE(4);  ISR_DECLARE(5);  ISR_DECLARE(6);  ISR_DECLARE(7);
+ISR_DECLARE(8);  ISR_DECLARE(9);  ISR_DECLARE(10); ISR_DECLARE(11);
+ISR_DECLARE(12); ISR_DECLARE(13); ISR_DECLARE(14); ISR_DECLARE(15);
+ISR_DECLARE(16); ISR_DECLARE(17); ISR_DECLARE(18); ISR_DECLARE(19);
+ISR_DECLARE(20); ISR_DECLARE(21); ISR_DECLARE(22); ISR_DECLARE(23);
+ISR_DECLARE(24); ISR_DECLARE(25); ISR_DECLARE(26); ISR_DECLARE(27);
+ISR_DECLARE(28); ISR_DECLARE(29); ISR_DECLARE(30); ISR_DECLARE(31);
+
+/* IRQ 0-15 */
+IRQ_DECLARE(0); IRQ_DECLARE(1); IRQ_DECLARE(2); IRQ_DECLARE(3);
+IRQ_DECLARE(4); IRQ_DECLARE(5); IRQ_DECLARE(6); IRQ_DECLARE(7);
+IRQ_DECLARE(8); IRQ_DECLARE(9); IRQ_DECLARE(10); IRQ_DECLARE(11);
+IRQ_DECLARE(12); IRQ_DECLARE(13); IRQ_DECLARE(14); IRQ_DECLARE(15);
 
 struct idt_entry {
     uint16_t offset_low;
@@ -84,7 +53,7 @@ static void (*irq_table[16])() = {
 struct idt_entry idt[256] __attribute__((aligned(16)));
 struct idt_pointer idt_p __attribute__((aligned(16)));
 
-void set_idt_entry(uint8_t num, uint32_t base, uint16_t sel, uint8_t flags) {
+static inline void set_idt_entry(uint8_t num, uint32_t base, uint16_t sel, uint8_t flags) {
     idt[num].offset_low  = base & 0xFFFF;
     idt[num].selector    = sel;
     idt[num].zero        = 0;
