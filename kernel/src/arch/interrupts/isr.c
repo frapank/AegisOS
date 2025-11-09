@@ -1,7 +1,8 @@
 #include "arch/interrupts/isr.h"
 #include "core/print.h"
+#include "utils/defhelp.h"
 
-char* exception_names[32] = {
+static char* const exception_names[32] = {
     "0: Division for zero",
     "1: Debug",
     "2: Non maskable interrupt (NMI)",
@@ -72,7 +73,7 @@ DECLARE_ISR_WEAK(29);
 DECLARE_ISR_WEAK(30);
 DECLARE_ISR_WEAK(31);
 
-void (*isr_handlers[32])(struct regs*) = {
+static void (* const isr_handlers[32])(struct regs*) = {
     isr0_man,  isr1_man,  isr2_man,  isr3_man,
     isr4_man,  isr5_man,  isr6_man,  isr7_man,
     isr8_man,  isr9_man,  isr10_man, isr11_man,
@@ -83,14 +84,14 @@ void (*isr_handlers[32])(struct regs*) = {
     isr28_man, isr29_man, isr30_man, isr31_man
 };
 
-void default_isr_handler(struct regs* regs){
+static void __attribute__((noreturn)) default_isr_handler(struct regs* regs){
     printk_color("Unhandled isr %s...\n", VGA_COLOR_LIGHT_RED, VGA_COLOR_BLACK, exception_names[regs->int_no]);
     for (;;) { asm volatile("hlt"); } // Todo: Remove when panic are added
 }
 
 void __attribute__((cdecl)) i686_ISR_Handler(struct regs* regs) {
-    uint32_t num = regs->int_no;
-    if (num < 32) {
+    uint8_t num = regs->int_no;
+    if (likely(num < 32)) {
         isr_handlers[num](regs);
     } else {
         printk_color("Unknown interrupt number: %d\n", VGA_COLOR_LIGHT_RED, VGA_COLOR_BLACK, num);
