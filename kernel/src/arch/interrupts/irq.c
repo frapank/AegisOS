@@ -8,24 +8,24 @@ static void default_irq_handler(struct regs* regs){
     (void)regs;
 }
 
-#define DECLARE_IRQ_WEAK(n) \
-void irq##n##_man(struct regs *r) __attribute__((weak, alias("default_irq_handler")))
+#define UNDECLARED_IRQ(n) \
+void irq##n##_man(struct regs *r) __attribute__((alias("default_irq_handler")))
 
-DECLARE_IRQ_WEAK(0);
-DECLARE_IRQ_WEAK(2);
-DECLARE_IRQ_WEAK(3);
-DECLARE_IRQ_WEAK(4);
-DECLARE_IRQ_WEAK(5);
-DECLARE_IRQ_WEAK(6);
-DECLARE_IRQ_WEAK(7);
-DECLARE_IRQ_WEAK(8);
-DECLARE_IRQ_WEAK(9);
-DECLARE_IRQ_WEAK(10);
-DECLARE_IRQ_WEAK(11);
-DECLARE_IRQ_WEAK(12);
-DECLARE_IRQ_WEAK(13);
-DECLARE_IRQ_WEAK(14);
-DECLARE_IRQ_WEAK(15);
+UNDECLARED_IRQ(0);
+UNDECLARED_IRQ(2);
+UNDECLARED_IRQ(3);
+UNDECLARED_IRQ(4);
+UNDECLARED_IRQ(5);
+UNDECLARED_IRQ(6);
+UNDECLARED_IRQ(7);
+UNDECLARED_IRQ(8);
+UNDECLARED_IRQ(9);
+UNDECLARED_IRQ(10);
+UNDECLARED_IRQ(11);
+UNDECLARED_IRQ(12);
+UNDECLARED_IRQ(13);
+UNDECLARED_IRQ(14);
+UNDECLARED_IRQ(15);
 
 static void irq1_man(struct regs *r){
     keyboard_interrupt_handler();
