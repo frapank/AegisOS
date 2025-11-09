@@ -10,7 +10,7 @@ SRC_DIR = kernel/src
 INC_DIR   = kernel/include
 LINK_FILE = link.ld
 
-GCC_FLAGS = -ffreestanding -m32 -g -O0 -fno-omit-frame-pointer
+GCC_FLAGS = -ffreestanding -m32 -O2 -fno-omit-frame-pointer -g -fno-stack-protector -fno-builtin -fno-common -march=i686 -mtune=i686 -pipe
 ASM_DFLAGS = -g -F dwarf
 INCLUDE_FLAGS = -I$(INC_DIR)
 
