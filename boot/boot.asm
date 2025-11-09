@@ -1,9 +1,4 @@
-;---------------------------------------------------------------
-; This is a simple boot loader for my operating sysetm.
-; I hope this project could get bigger :D
-;---------------------------------------------------------------
-
-bits 16
+[bits 16]
 org 0x7c00
 
 start:
@@ -27,22 +22,20 @@ start:
     call clear_screen
     mov si, msg_wait
     call print_string
-    call wait_key
-    call clear_screen
 
     call read_disk
-    call start_protected
+    call start_second
     sti
 
 ;----------------
 ; Data
-line_down db 0Dh, 0Ah, 0
-msg_wait db "Press a key to continue...",0Dh,0Ah,0
-msg_disk_error db "Error while reading the disk...",0Dh,0Ah,0
-boot_disk db 0
-CODE_SEG equ gdt_code - gdt_start
-DATA_SEG equ gdt_data - gdt_start
-KERNEL_LOCATION equ 0x1000
+msg_wait            db "[*] Loading second stage...",0Dh,0Ah,0
+msg_disk_error      db "[-] Can't find second stage, stopped",0Dh,0Ah,0
+
+boot_disk           db 0
+STAGE_LOCATION      equ 0x1000
+STAGE_SECTORS       equ 1
+STAGE_START_SECTOR  equ 2
 
 ;----------------
 ; Graphics
@@ -73,13 +66,6 @@ clear_screen:
     int 0x10
     ret
 
-wait_key:
-    sti
-    mov ah, 0x00
-    int 0x16
-    cli
-    ret
-
 ;------------------
 ; Setup Protected
 read_disk:
@@ -87,12 +73,12 @@ read_disk:
     xor ax, ax
     mov ds, ax
     mov es, ax 
-    mov bx, KERNEL_LOCATION
+    mov bx, STAGE_LOCATION
 
     mov ah, 0x02
-    mov al, 10
+    mov al, STAGE_SECTORS
     mov ch, 0x00
-    mov cl, 0x02
+    mov cl, STAGE_START_SECTOR
     mov dh, 0x00
     mov dl, [boot_disk]
     int 0x13
@@ -104,54 +90,8 @@ disk_error:
     hlt
     jmp $
 
-start_protected:
-    cli
-    lgdt [gdt_descriptor]
-    mov eax, cr0
-    or eax, 1
-    mov cr0, eax
-    jmp CODE_SEG:start_protected_mode
-
-gdt_start:
-    gdt_null:
-        dd 0x0
-        dd 0x0
-
-    gdt_code:
-        dw 0xffff
-        dw 0x0
-        db 0x0
-        db 0b10011010
-        db 0b11001111
-        db 0x0
-
-    gdt_data:
-        dw 0xffff
-        dw 0x0
-        db 0x0
-        db 0b10010010
-        db 0b11001111
-        db 0x0
-
-gdt_end:
-
-gdt_descriptor:
-    dw gdt_end - gdt_start - 1
-    dd gdt_start
-
-[bits 32]
-start_protected_mode:
-    mov ax, DATA_SEG
-	mov ds, ax
-	mov ss, ax
-	mov es, ax
-	mov fs, ax
-	mov gs, ax
-	
-	mov ebp, 0x90000
-	mov esp, ebp
-
-    jmp KERNEL_LOCATION
+start_second:
+    jmp 0x0000:STAGE_LOCATION
 
 times 510-($-$$) db 0
 dw 0xaa55
