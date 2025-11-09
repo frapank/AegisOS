@@ -19,11 +19,11 @@ all: boot kernel
 boot:
 	mkdir -p $(BUILD_DIR)
 	$(ASM) -f bin                 $(BOOT_DIR)/boot.asm         -o $(BUILD_DIR)/boot.bin
-	$(ASM) -f elf32 $(ASM_DFLAGS) $(BOOT_DIR)/boot_second.asm -o $(BUILD_DIR)/boot_second.o
+	$(ASM) -f bin                 $(BOOT_DIR)/boot_second.asm  -o $(BUILD_DIR)/boot_second.bin
+	$(ASM) -f elf32 $(ASM_DFLAGS) $(BOOT_DIR)/kernel_entry.asm -o $(BUILD_DIR)/kernel_entry.o
 	@echo "[+] Boot done"
 
 kernel: boot
-
 	$(GCC) $(GCC_FLAGS) $(INCLUDE_FLAGS) -c $(SRC_DIR)/kernel.c                 -o $(BUILD_DIR)/kernel.o
 	$(GCC) $(GCC_FLAGS) $(INCLUDE_FLAGS) -c $(SRC_DIR)/core/format.c            -o $(BUILD_DIR)/format.o
 	$(GCC) $(GCC_FLAGS) $(INCLUDE_FLAGS) -c $(SRC_DIR)/core/print.c             -o $(BUILD_DIR)/print.o
@@ -37,7 +37,7 @@ kernel: boot
 	$(ASM) -f elf32 $(ASM_DFLAGS)           $(SRC_DIR)/arch/interrupts/isr.asm  -o $(BUILD_DIR)/isr_asm.o
 
 	$(LD) -T $(LINK_FILE) \
-	    $(BUILD_DIR)/boot_second.o \
+	    $(BUILD_DIR)/kernel_entry.o \
 	    $(BUILD_DIR)/kernel.o \
 	    $(BUILD_DIR)/format.o \
 	    $(BUILD_DIR)/print.o \
@@ -53,16 +53,16 @@ kernel: boot
 	    -Map=$(BUILD_DIR)/linkmap.txt
 
 	$(OBJCOPY) -O binary build/full_kernel.elf build/full_kernel.bin
-	$(CAT) build/boot.bin build/full_kernel.bin > build/everything.bin
+	$(CAT) build/boot.bin build/boot_second.bin build/full_kernel.bin > build/everything.bin
 	@echo "[+] Kernel done"
 
 run: all
-	qemu-system-i386 -drive format=raw,file=$(BUILD_DIR)/everything.bin
+	@echo "[*] Starting Bochs..."
+	bochs -qf bochsrc.txt
 
 debug: all
-	qemu-system-i386 -S -gdb tcp::1234 \
-		-serial stdio \
-		-drive format=raw,file=$(BUILD_DIR)/everything.bin
+	@echo "[*] Starting Bochs with debugger..."
+	bochs -f bochsrc.txt -dbg
 
 clean:
 	rm -rf $(BUILD_DIR)
