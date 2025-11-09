@@ -1,12 +1,12 @@
-;----------------
-; Start the kernel
+[bits 32]
 global _start
 extern kernel_main
 
-section .text
-    bits 32
-
 _start:
+    ; Cose da fare prima
+    call start_kernel
+
+start_kernel:
     cli ; Will enable the interrupts after the pid_init()
     call kernel_main
     cli

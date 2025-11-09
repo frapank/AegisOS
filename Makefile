@@ -18,8 +18,8 @@ all: boot kernel
 
 boot:
 	mkdir -p $(BUILD_DIR)
-	$(ASM) -f elf32 $(ASM_DFLAGS) $(BOOT_DIR)/kernel_entry.asm -o $(BUILD_DIR)/kernel_entry.o
 	$(ASM) -f bin                 $(BOOT_DIR)/boot.asm         -o $(BUILD_DIR)/boot.bin
+	$(ASM) -f elf32 $(ASM_DFLAGS) $(BOOT_DIR)/boot_second.asm -o $(BUILD_DIR)/boot_second.o
 	@echo "[+] Boot done"
 
 kernel: boot
@@ -37,7 +37,7 @@ kernel: boot
 	$(ASM) -f elf32 $(ASM_DFLAGS)           $(SRC_DIR)/arch/interrupts/isr.asm  -o $(BUILD_DIR)/isr_asm.o
 
 	$(LD) -T $(LINK_FILE) \
-	    $(BUILD_DIR)/kernel_entry.o \
+	    $(BUILD_DIR)/boot_second.o \
 	    $(BUILD_DIR)/kernel.o \
 	    $(BUILD_DIR)/format.o \
 	    $(BUILD_DIR)/print.o \
