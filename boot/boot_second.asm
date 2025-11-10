@@ -3,70 +3,59 @@ org 0x1000
 
 second_stage:
 
-    mov si, msg_loaded        ; Load pointer to "Second Stage loaded" message
-    call print_string         ; Print message
-    mov si, msg_wait          ; Load pointer to "Press a key" message
-    call print_string         ; Print message
-    ;call wait_key            ; Wait for key press
+    ; Print welcome ascii 
+    ; mov si, ascii_n = argument
+    mov si, ascii_1
+    call print_string
+    mov si, ascii_2
+    call print_string
+    mov si, ascii_3
+    call print_string
+    mov si, ascii_4
+    call print_string
+    mov si, ascii_5
+    call print_string
+    mov si, ascii_6
+    call print_string
+    mov si, ascii_7
+    call print_string
+    mov si, ascii_8
+    call print_string
+    mov si, ascii_9
+    call print_string
 
-    call read_disk            ; Read kernel from disk
-    call start_protected      ; Switch to protected mode
+    call wait_key                   ; Wait for key press
+
+    call read_disk                  ; Read kernel from disk
+    call start_protected            ; Switch to protected mode
 
 ;----------------
 ; Data
-msg_loaded          db "[+] Second Stage loaded!",0Dh,0Ah,0
-msg_wait            db "[*] Press a key to continue...",0Dh,0Ah,0
 msg_disk_error      db "[-] Error while reading the disk",0Dh,0Ah,0
-msg_done            db "[+] Done", 0Dh, 0Ah,0
+
+ascii_1             db "+---------------------------------+",0Dh,0Ah,0
+ascii_2             db "|         LAIN BOOTLOADER         |",0Dh,0Ah,0
+ascii_3             db "|                                 |",0Dh,0Ah,0
+ascii_4             db "|  Welcome to the official LainOS |",0Dh,0Ah,0
+ascii_5             db "|            bootloader           |",0Dh,0Ah,0
+ascii_6             db "|                                 |",0Dh,0Ah,0
+ascii_7             db "|      Press a key to continue    |",0Dh,0Ah,0
+ascii_8             db "|                                 |",0Dh,0Ah,0
+ascii_9             db "+---------------------------------+",0Dh,0Ah,0
 
 CODE_SEG            equ gdt_code - gdt_start                   ; Offset of code segment in GDT
 DATA_SEG            equ gdt_data - gdt_start                   ; Offset of data segment in GDT
 KERNEL_LOCATION     equ 0x2000                                 ; Load address of kernel
 KERNEL_SECTORS      equ 10                                     ; Number of sectors to read
-KERNEL_START_SECTOR equ 3                                      ; Start sector on disk
+KERNEL_START_SECTOR equ 4                                      ; Start sector on disk
 
-;----------------
-; Graphics
-print_string:
-    mov ah, 0x0e            ; BIOS display function
-    .print_loop:
-        lodsb               ; Increment SI to point to next character and
-                            ; load character in al
-        cmp al, 0           ; Check for null terminator (end of string)
-        je .print_done      ; Jump if end of string
-        int 0x10            ; Call BIOS video interrupt
-        jmp .print_loop     ; Repeat loop for next character
-    .print_done:
-        ret
-
-clear_screen:
-    mov ah, 0x06            ; Scroll window function
-    xor al, al              ; Clear lines to scroll
-    mov bh, 0x07            ; Attribute for blank lines
-    xor cx, cx              ; Upper left corner (row/col)
-    mov dh, 24-1            ; Lower right row
-    mov dl, 80-1            ; Lower right column
-    int 0x10                ; BIOS video interrupt to scroll
-    
-    mov ah, 0x02            ; Set cursor position
-    xor bh, bh              ; Page number
-    xor dh, dh              ; Row = 0
-    xor dl, dl              ; Column = 0
-    int 0x10                ; BIOS interrupt to set cursor
-    ret
-
-wait_key:
-    sti                     ; Enable interrupts
-    mov ah, 0x00            ; BIOS keyboard input function
-    int 0x16                ; Wait for keypress
-    cli                     ; Disable interrupts again
-    ret                     ; Return from function
+%include "boot/graphics.asm" ; Include (copy) print_string, clear_screen and wait_key
 
 ;----------------
 ; Disk operations
 read_disk:
-    cli                         ; Disable interrupts
-    xor ax, ax                  ; Clear AX
+    cli
+    xor ax, ax
     mov ds, ax                  ; Set DS to 0
     mov es, ax                  ; Set ES to 0
     mov bx, KERNEL_LOCATION     ; Destination address for disk read
@@ -76,7 +65,8 @@ read_disk:
     mov ch, 0x00                ; Cylinder 0
     mov cl, KERNEL_START_SECTOR ; Start sector
     mov dh, 0x00                ; Head 0
-    mov dl, 0x80                ; Drive number (0x80 = first HDD) ( should change )
+    mov dl, 0x80                ; Drive number (0x80 = first HDD) ( should change ) 
+    ;TODO: Make dl pass boot_disk from boot.asm
     int 0x13                    ; BIOS disk interrupt
     jc disk_error               ; Jump if carry flag set (error)
     ret                         ; Return if success
@@ -103,6 +93,7 @@ start_protected:
 ;----------------
 ; Global Descriptor Table
 gdt_start:
+
 gdt_null:
     dd 0x0
     dd 0x0
@@ -146,3 +137,4 @@ start_protected_mode:
 
     jmp KERNEL_LOCATION     ; Jump to loaded kernel
 
+times 1024 - ($ - $$) db 0
