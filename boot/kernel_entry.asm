@@ -4,11 +4,9 @@ global _start
 extern kernel_main
 
 _start:
-    jmp $
-    cli ; Will enable the interrupts after the pid_init()
-    call kernel_main
-    cli
+    cli                 ; Disable interrupts, will be reenabled after pid_init() in the kernel_main
+    call kernel_main    ; Call the main kernel function
+    cli                 ; Disable interupts again after returning (safety measure)
 .halt_loop:
-    hlt
-    jmp .halt_loop
-
+    hlt                 ; Hlt CPU until next interrupt
+    jmp .halt_loop      ; Infinite loop to prevent execution past this point
