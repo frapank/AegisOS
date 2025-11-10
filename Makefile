@@ -64,6 +64,10 @@ debug: all
 	@echo "[*] Starting Bochs with debugger..."
 	bochs -f bochsrc.txt -dbg
 
+tools:
+	@echo "[*] Installing in '~/usr/local/i386elfgcc'"
+	./tool_make.sh
+
 clean:
 	rm -rf $(BUILD_DIR)
 	@echo "[+] Clean"
