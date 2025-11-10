@@ -58,11 +58,7 @@ kernel: boot
 
 run: all
 	@echo "[*] Starting Bochs..."
-	bochs -qf bochsrc.txt
-
-debug: all
-	@echo "[*] Starting Bochs with debugger..."
-	bochs -f bochsrc.txt -dbg
+	qemu-system-x86_64 -hda $(BUILD_DIR)/everything.bin -boot c
 
 tools:
 	@echo "[*] Installing in '~/usr/local/i386elfgcc'"
