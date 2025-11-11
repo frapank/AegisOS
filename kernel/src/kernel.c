@@ -2,7 +2,7 @@
 #include "arch/io.h"
 #include "arch/pic.h"
 #include "core/print.h"
-#include "drivers/keyboard.h"
+#include "utils/kshell/kshell.h"
 
 void kernel_main() {
     idt_init();
@@ -11,11 +11,12 @@ void kernel_main() {
     
     clear_screen();
     printk("Welcome to your personal os!\n");
-    // Test 
-    for (;;){
-        char c = getch();
-        printk("%c", c);
-    }
+
+    // Kernel debug shell
+    kshell_start();
+    
+    printk_color("No programming running, starting loop...", VGA_COLOR_RED, VGA_COLOR_BLACK);
+    for(;;);
 
     return;
 }
