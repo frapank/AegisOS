@@ -3,6 +3,6 @@
 
 void cmd_clear();
 void cmd_exit();
-void cmd_help();
+void cmd_about();
 
 #endif
