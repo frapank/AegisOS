@@ -46,7 +46,7 @@ ascii_9             db "+---------------------------------+",0Dh,0Ah,0
 CODE_SEG            equ gdt_code - gdt_start                   ; Offset of code segment in GDT
 DATA_SEG            equ gdt_data - gdt_start                   ; Offset of data segment in GDT
 KERNEL_LOCATION     equ 0x2000                                 ; Load address of kernel
-KERNEL_SECTORS      equ 11                                     ; Number of sectors to read
+KERNEL_SECTORS      equ 13                                     ; Number of sectors to read
 KERNEL_START_SECTOR equ 4                                      ; Start sector on disk
 
 %include "boot/graphics.asm" ; Include (copy) print_string, clear_screen and wait_key
