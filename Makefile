@@ -24,17 +24,20 @@ boot:
 	@echo "[+] Boot done"
 
 kernel: boot
-	$(GCC) $(GCC_FLAGS) $(INCLUDE_FLAGS) -c $(SRC_DIR)/kernel.c                 -o $(BUILD_DIR)/kernel.o
-	$(GCC) $(GCC_FLAGS) $(INCLUDE_FLAGS) -c $(SRC_DIR)/core/format.c            -o $(BUILD_DIR)/format.o
-	$(GCC) $(GCC_FLAGS) $(INCLUDE_FLAGS) -c $(SRC_DIR)/core/print.c             -o $(BUILD_DIR)/print.o
-	$(GCC) $(GCC_FLAGS) $(INCLUDE_FLAGS) -c $(SRC_DIR)/core/memory.c            -o $(BUILD_DIR)/memory.o
-	$(GCC) $(GCC_FLAGS) $(INCLUDE_FLAGS) -c $(SRC_DIR)/drivers/vga/vga.c            -o $(BUILD_DIR)/vga.o
-	$(GCC) $(GCC_FLAGS) $(INCLUDE_FLAGS) -c $(SRC_DIR)/drivers/keyboard.c       -o $(BUILD_DIR)/keyboard.o
-	$(GCC) $(GCC_FLAGS) $(INCLUDE_FLAGS) -c $(SRC_DIR)/arch/pic.c               -o $(BUILD_DIR)/pic.o
-	$(GCC) $(GCC_FLAGS) $(INCLUDE_FLAGS) -c $(SRC_DIR)/arch/interrupts/idt.c    -o $(BUILD_DIR)/idt.o
-	$(GCC) $(GCC_FLAGS) $(INCLUDE_FLAGS) -c $(SRC_DIR)/arch/interrupts/isr.c    -o $(BUILD_DIR)/isr.o
-	$(GCC) $(GCC_FLAGS) $(INCLUDE_FLAGS) -c $(SRC_DIR)/arch/interrupts/irq.c    -o $(BUILD_DIR)/irq.o
-	$(ASM) -f elf32 $(ASM_DFLAGS)           $(SRC_DIR)/arch/interrupts/isr.asm  -o $(BUILD_DIR)/isr_asm.o
+	$(GCC) $(GCC_FLAGS) $(INCLUDE_FLAGS) -c $(SRC_DIR)/kernel.c                          -o $(BUILD_DIR)/kernel.o
+	$(GCC) $(GCC_FLAGS) $(INCLUDE_FLAGS) -c $(SRC_DIR)/core/format.c                     -o $(BUILD_DIR)/format.o
+	$(GCC) $(GCC_FLAGS) $(INCLUDE_FLAGS) -c $(SRC_DIR)/core/print.c                      -o $(BUILD_DIR)/print.o
+	$(GCC) $(GCC_FLAGS) $(INCLUDE_FLAGS) -c $(SRC_DIR)/core/memory.c                     -o $(BUILD_DIR)/memory.o
+	$(GCC) $(GCC_FLAGS) $(INCLUDE_FLAGS) -c $(SRC_DIR)/drivers/vga/vga.c                 -o $(BUILD_DIR)/vga.o
+	$(GCC) $(GCC_FLAGS) $(INCLUDE_FLAGS) -c $(SRC_DIR)/drivers/keyboard.c                -o $(BUILD_DIR)/keyboard.o
+	$(GCC) $(GCC_FLAGS) $(INCLUDE_FLAGS) -c $(SRC_DIR)/arch/pic.c                        -o $(BUILD_DIR)/pic.o
+	$(GCC) $(GCC_FLAGS) $(INCLUDE_FLAGS) -c $(SRC_DIR)/arch/interrupts/idt.c             -o $(BUILD_DIR)/idt.o
+	$(GCC) $(GCC_FLAGS) $(INCLUDE_FLAGS) -c $(SRC_DIR)/arch/interrupts/isr.c             -o $(BUILD_DIR)/isr.o
+	$(GCC) $(GCC_FLAGS) $(INCLUDE_FLAGS) -c $(SRC_DIR)/arch/interrupts/irq.c             -o $(BUILD_DIR)/irq.o
+	$(GCC) $(GCC_FLAGS) $(INCLUDE_FLAGS) -c $(SRC_DIR)/utils/kshell/kshell.c             -o $(BUILD_DIR)/kshell.o
+	$(GCC) $(GCC_FLAGS) $(INCLUDE_FLAGS) -c $(SRC_DIR)/utils/kshell/kshell_commands.c    -o $(BUILD_DIR)/kshell_commands.o
+	$(GCC) $(GCC_FLAGS) $(INCLUDE_FLAGS) -c $(SRC_DIR)/utils/string.c                    -o $(BUILD_DIR)/string.o
+	$(ASM) -f elf32 $(ASM_DFLAGS)           $(SRC_DIR)/arch/interrupts/isr.asm           -o $(BUILD_DIR)/isr_asm.o
 
 	$(LD) -T $(LINK_FILE) \
 	    $(BUILD_DIR)/kernel_entry.o \
@@ -49,6 +52,9 @@ kernel: boot
 	    $(BUILD_DIR)/irq.o \
 	    $(BUILD_DIR)/pic.o \
 	    $(BUILD_DIR)/isr_asm.o \
+	    $(BUILD_DIR)/kshell.o \
+	    $(BUILD_DIR)/kshell_commands.o \
+	    $(BUILD_DIR)/string.o \
 	    -o $(BUILD_DIR)/full_kernel.elf \
 	    -Map=$(BUILD_DIR)/linkmap.txt
 
