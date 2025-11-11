@@ -27,6 +27,7 @@ static const struct command commands_list[] = {
     { "exit",  "Exit shell",         cmd_exit  },
     { "help",  "Print help",         cmd_help_local  },
     { "about", "Print start screen", cmd_about  },
+    { "binfo", "All build info",     cmd_binfo  },
 };
 
 #define COMMAND_LIST_SIZE sizeof(commands_list)/sizeof(commands_list[0])
