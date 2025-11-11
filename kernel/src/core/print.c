@@ -21,14 +21,14 @@ static void scroll_if_needed() {
     uint32_t src_offset = lines * bytes_per_row;
     uint32_t move_bytes = (VGA_HEIGHT * bytes_per_row) - src_offset;
 
-    memmove((void *)vga, (void *)((uint8_t*)vga + src_offset), move_bytes);
+    kmemmove((void *)vga, (void *)((uint8_t*)vga + src_offset), move_bytes);
 
     uint8_t att = ((DEFAULT_BACKGROUND_COLOR & 0x0F) << 4) | (DEFAULT_TEXT_COLOR & 0x0F);
     uint16_t blank = (' ' | (att << 8));
 
     uint16_t *last_row = vga + (VGA_HEIGHT - lines) * VGA_WIDTH;
     for (int r = 0; r < lines; r++) {
-        memset16(last_row + r * VGA_WIDTH, blank, VGA_WIDTH);
+        kmemset16(last_row + r * VGA_WIDTH, blank, VGA_WIDTH);
     }
 
     cursor.y = VGA_HEIGHT - 1;
@@ -132,7 +132,7 @@ void vprint_color(char *msg, enum vga_color text, enum vga_color background,
     }
 }
 
-void new_line() {
+void knew_line() {
     cursor.x = 0;
     cursor.y++;
     scroll_if_needed();
@@ -142,7 +142,7 @@ void clear_screen() {
     uint16_t* vga = (uint16_t*) VIDEO_MEMORY;
     uint16_t blank = (' ' | (DEFAULT_ATT << 8));
 
-    memset16(vga, blank, VGA_WIDTH * VGA_HEIGHT);
+    kmemset16(vga, blank, VGA_WIDTH * VGA_HEIGHT);
 
     cursor.x = 0;
     cursor.y = 0;
