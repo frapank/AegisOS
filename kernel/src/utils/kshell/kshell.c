@@ -6,16 +6,16 @@
 * Each command currently accepts no arguments.
 */
 
+#include <stddef.h>
 #include "core/print.h"
 #include "drivers/keyboard.h"
 #include "utils/string.h"
 #include "utils/kshell/kshell_commands.h"
 #include "core/memory.h"
-#include <stddef.h>
 
 static inline void print_shell(char* msg){
     printk_color("> %s", VGA_COLOR_GREEN, VGA_COLOR_BLACK, msg);
-    new_line();
+    knew_line();
 }
 
 struct command {
@@ -35,7 +35,7 @@ static const struct command commands_list[] = {
 static inline void check_command(char* cmd_name){
     for(size_t i = 0; i < COMMAND_LIST_SIZE; i++){
         struct command cmd = commands_list[i];
-        if(streql(cmd_name, cmd.identifier)){
+        if(kstreql(cmd_name, cmd.identifier)){
             cmd.function();
             return;
         }
@@ -56,12 +56,12 @@ void kshell_start() {
             char c = getch();
 
             if(c == '\n'){
-                new_line();
+                knew_line();
                 if(index < sizeof(command_buffer) - 1){
                     check_command(command_buffer);
                 }
                 index = 0;
-                memset(command_buffer, 0, sizeof(command_buffer));
+                kmemset(command_buffer, 0, sizeof(command_buffer));
                 break;
             }
             // FIXME: '\r' breaks input handling
