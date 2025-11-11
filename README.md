@@ -18,19 +18,18 @@ I’ve built a **custom bootloader** in assembly, which I plan to expand to be m
 
 | Component              | Status    |
 | ---------------------- | --------- |
-| Bootloader             | ✅ Done    |
-| Kernel                 | ✅ Done    |
-| IDT                    | ✅ Done    |
-| ISR / IRQ Manager      | ✅ Done    |
-| PIC                    | ✅ Done    |
-| Keyboard & VGA Drivers | ✅ Done    |
-| Print Driver           | ✅ Done    |
-| Mini Shell             | ✅ Done    |
-| Long mode              | ❌ Not yet |
-| Paging                 | ❌ Not yet |
-| Virtual Memory         | ❌ Not yet |
-| User Mode              | ❌ Not yet |
-| File System            | ❌ Not yet |
+| Bootloader             |  Done    |
+| Kernel                 |  Done    |
+| IDT                    |  Done    |
+| ISR / IRQ Manager      |  Done    |
+| PIC                    |  Done    |
+| Keyboard & VGA Drivers |  Done    |
+| Print Driver           |  Done    |
+| Mini Shell             |  Done    |
+| Long mode              |  Not yet |
+| Paging                 |  Not yet |
+| Virtual Memory         |  Not yet |
+| User Mode              |  Not yet |
+| File System            |  Not yet |
 
-i
 
