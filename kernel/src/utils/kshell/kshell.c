@@ -9,14 +9,12 @@
 #include <stddef.h>
 #include "core/print.h"
 #include "drivers/keyboard.h"
+#include "drivers/vga/vga.h"
 #include "utils/string.h"
 #include "utils/kshell/kshell_commands.h"
 #include "core/memory.h"
 
-static inline void print_shell(char* msg){
-    printk_color("> %s", VGA_COLOR_GREEN, VGA_COLOR_BLACK, msg);
-    knew_line();
-}
+static void cmd_help_local();
 
 struct command {
     const char* identifier; 
@@ -26,8 +24,9 @@ struct command {
 
 static const struct command commands_list[] = {
     { "clear", "Clear the console",  cmd_clear },
-    { "exit",  "Exit the OS",        cmd_exit  },
-    { "help",  "Print help",         cmd_help  },
+    { "exit",  "Exit shell",         cmd_exit  },
+    { "help",  "Print help",         cmd_help_local  },
+    { "about", "Print start screen", cmd_about  },
 };
 
 #define COMMAND_LIST_SIZE sizeof(commands_list)/sizeof(commands_list[0])
@@ -40,14 +39,23 @@ static inline void check_command(char* cmd_name){
             return;
         }
     }
-    print_shell("Command not found");
+    printk_color("Command %s not found \n", VGA_COLOR_LIGHT_RED, VGA_COLOR_BLACK, cmd_name);
+}
+
+static void cmd_help_local(){
+    printk_color("Commands list:\n", VGA_COLOR_LIGHT_BLUE, VGA_COLOR_BLACK);
+    for(size_t i = 0; i < COMMAND_LIST_SIZE; i++){
+        struct command cmd = commands_list[i];
+        printk_color(" > %s: ", VGA_COLOR_YELLOW, VGA_COLOR_BLACK, cmd.identifier);
+        printk_color("%s\n", VGA_COLOR_WHITE, VGA_COLOR_BLACK, cmd.help);
+    }
 }
 
 static int running = 0;
 
 void kshell_start() {
     clear_screen();
-    print_shell("Welcome to the minimal shell of shell! Type help for all the commands_list");
+    cmd_about(); // Welcome message
     running = 1;
     char command_buffer[256];
     size_t index = 0;
