@@ -1,6 +1,7 @@
 # Lain OS
 
-**Lain OS** is my very first operating system project. It’s part of my learning journey — I want to see how far I can take it.
+**Lain OS** is my very first operating system project. It’s part of my learning journey. 
+I want to see how far I can take it.
 
 ---
 
