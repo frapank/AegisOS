@@ -58,25 +58,39 @@ void kshell_start() {
     clear_screen();
     cmd_about(); // Welcome message
     running = 1;
-    char command_buffer[256];
+    char command_buffer[10];
     size_t index = 0;
     while(running == 1){
         for (;;){
             char c = getch();
 
-            if(c == '\n'){
+            // Enter: Process comands
+            if (c == '\n') {
                 knew_line();
-                if(index < sizeof(command_buffer) - 1){
-                    check_command(command_buffer);
-                }
+                command_buffer[index] = '\0';
+                check_command(command_buffer);
                 index = 0;
                 kmemset(command_buffer, 0, sizeof(command_buffer));
                 break;
             }
-            // FIXME: '\r' breaks input handling
-            command_buffer[index] = c;
-            index++;
-            printk("%c", c);
+
+            // Backspace: Delete char
+            if (c == 0x08 || c == 0x7f) {
+                if (index > 0) {
+                    index--;
+                    command_buffer[index] = '\0';
+                    printk("\b \b");
+                }
+                continue;
+            }
+
+            // Normal: Add a char 
+            if (index < sizeof(command_buffer) - 1) {
+                if (c >= 32 && c <= 126) {
+                    command_buffer[index++] = c;
+                    printk("%c", c);
+                }
+            }
         }
     }
 }
