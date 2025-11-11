@@ -2,7 +2,7 @@
 #include "arch/io.h"
 #include "arch/pic.h"
 #include "core/print.h"
-#include "drivers/keyboard.h"
+#include "utils/kshell/kshell.h"
 
 void kernel_main() {
     idt_init();
@@ -11,11 +11,10 @@ void kernel_main() {
     
     clear_screen();
     printk("Welcome to your personal os!\n");
-    // Test 
-    for (;;){
-        char c = getch();
-        printk("%c", c);
-    }
+
+    // Kernel debug shell
+    kshell_start();
+    
 
     return;
 }
