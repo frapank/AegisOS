@@ -2,7 +2,7 @@
 #include "core/print.h"
 #include "utils/defhelp.h"
 
-static char* const exception_names[32] = {
+static const char* const exception_names[32] = {
     "0: Division for zero",
     "1: Debug",
     "2: Non maskable interrupt (NMI)",

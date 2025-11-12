@@ -8,7 +8,7 @@
 
 static struct line_data cursor = {0, 0};
 
-static void scroll_if_needed() {
+static void scroll_if_needed(void) {
     if (cursor.y < VGA_HEIGHT) return;
 
     uint16_t *vga = (uint16_t *) VIDEO_MEMORY;
@@ -132,13 +132,13 @@ void vprint_color(char *msg, enum vga_color text, enum vga_color background,
     }
 }
 
-void knew_line() {
+void knew_line(void) {
     cursor.x = 0;
     cursor.y++;
     scroll_if_needed();
 }
 
-void clear_screen() {
+void kclear_screen(void) {
     uint16_t* vga = (uint16_t*) VIDEO_MEMORY;
     uint16_t blank = (' ' | (DEFAULT_ATT << 8));
 

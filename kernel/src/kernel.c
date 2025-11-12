@@ -9,7 +9,7 @@ void kernel_main() {
     pic_init();
     sti();
     
-    clear_screen();
+    kclear_screen();
     printk("Welcome to your personal os!\n");
 
     // Kernel debug shell

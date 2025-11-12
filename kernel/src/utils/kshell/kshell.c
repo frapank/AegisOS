@@ -14,7 +14,7 @@
 #include "utils/kshell/kshell_commands.h"
 #include "core/memory.h"
 
-static void cmd_help_local();
+static void cmd_help_local(void);
 
 struct command {
     const char* identifier; 
@@ -43,7 +43,7 @@ static inline void check_command(char* cmd_name){
     printk_color("Command %s not found \n", VGA_COLOR_LIGHT_RED, VGA_COLOR_BLACK, cmd_name);
 }
 
-static void cmd_help_local(){
+static void cmd_help_local(void){
     printk_color("Commands list:\n", VGA_COLOR_LIGHT_BLUE, VGA_COLOR_BLACK);
     for(size_t i = 0; i < COMMAND_LIST_SIZE; i++){
         struct command cmd = commands_list[i];
@@ -54,8 +54,8 @@ static void cmd_help_local(){
 
 static int running = 0;
 
-void kshell_start() {
-    clear_screen();
+void kshell_start(void) {
+    kclear_screen();
     cmd_about(); // Welcome message
     running = 1;
     char command_buffer[10];
@@ -95,6 +95,6 @@ void kshell_start() {
     }
 }
 
-void kshell_stop(){
+void kshell_stop(void){
     running = 0;
 }
