@@ -61,7 +61,7 @@ static inline void set_idt_entry(uint8_t num, uint32_t base, uint16_t sel, uint8
     idt[num].offset_high = (base >> 16) & 0xFFFF;
 }
 
-void idt_init(){
+void idt_init(void){
     idt_p.limit = sizeof(idt) - 1;
     idt_p.base = (uint32_t)&idt;
 

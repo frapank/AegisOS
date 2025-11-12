@@ -55,7 +55,7 @@ static void kbd_buffer_push(uint16_t char_code){
     kbd_head = next;
 }
 
-static uint16_t kbd_buffer_pop(){
+static uint16_t kbd_buffer_pop(void){
     uint16_t ret_val = -1;
     cli();
     if(!kbd_is_empty()){
@@ -66,7 +66,7 @@ static uint16_t kbd_buffer_pop(){
     return ret_val; // return -1 if empty
 }
 
-char getch(){
+char getch(void){
     char c;
     for (;;){
         c = kbd_buffer_pop();
@@ -76,7 +76,7 @@ char getch(){
     }
 }
 
-void keyboard_interrupt_handler(){
+void keyboard_interrupt_handler(void){
 
     uint8_t sc = inb(0x60);
     uint8_t key = sc & 0x7F;

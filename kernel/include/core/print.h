@@ -11,8 +11,8 @@ struct line_data {
 void printk(char *msg, ...);
 void printk_color(char *msg, enum vga_color text, enum vga_color background, ...);
 void vprint_color(char *msg, enum vga_color text, enum vga_color background, __builtin_va_list args);
-void clear_screen();
 
-void knew_line();
+void kclear_screen(void);
+void knew_line(void);
 
 #endif
