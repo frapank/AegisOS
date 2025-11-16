@@ -1,5 +1,7 @@
 #include "arch/interrupts/idt.h"
 
+#include "utils/types.h"
+
 #define ISR_DECLARE(n) extern void i686_ISR##n(void)
 #define IRQ_DECLARE(n) extern void i686_IRQ##n(void)
 
@@ -20,16 +22,16 @@ IRQ_DECLARE(8); IRQ_DECLARE(9); IRQ_DECLARE(10); IRQ_DECLARE(11);
 IRQ_DECLARE(12); IRQ_DECLARE(13); IRQ_DECLARE(14); IRQ_DECLARE(15);
 
 struct idt_entry {
-    uint16_t offset_low;
-    uint16_t selector;
-    uint8_t  zero;
-    uint8_t  type_attr;
-    uint16_t offset_high;
+    u16 offset_low;
+    u16 selector;
+    u8 zero;
+    u8  type_attr;
+    u16 offset_high;
 } __attribute__((packed));
 
 struct idt_pointer {
-    uint16_t limit;
-    uint32_t base;
+    u16 limit;
+    u32 base;
 } __attribute__((packed));
 
 static void (*isr_table[32])() = {
@@ -53,7 +55,7 @@ static void (*irq_table[16])() = {
 struct idt_entry idt[256] __attribute__((aligned(16)));
 struct idt_pointer idt_p __attribute__((aligned(16)));
 
-static inline void set_idt_entry(uint8_t num, uint32_t base, uint16_t sel, uint8_t flags) {
+static inline void set_idt_entry(u8 num, u32 base, u16 sel, u8 flags) {
     idt[num].offset_low  = base & 0xFFFF;
     idt[num].selector    = sel;
     idt[num].zero        = 0;
@@ -63,7 +65,7 @@ static inline void set_idt_entry(uint8_t num, uint32_t base, uint16_t sel, uint8
 
 void idt_init(void){
     idt_p.limit = sizeof(idt) - 1;
-    idt_p.base = (uint32_t)&idt;
+    idt_p.base = (u32)&idt;
 
     // Clear idt
     for (int i = 0; i < 256; i++) {
@@ -76,12 +78,12 @@ void idt_init(void){
 
     // Set isr
     for (int i = 0; i < 32; i++) {
-        set_idt_entry(i, (uint32_t)isr_table[i], 0x08, 0x8E);
+        set_idt_entry(i, (u32)isr_table[i], 0x08, 0x8E);
     }
 
     // Set irq
     for (int i = 0; i < 16; i++) {
-        set_idt_entry(0x20 + i, (uint32_t)irq_table[i], 0x08, 0x8E);
+        set_idt_entry(0x20 + i, (u32)irq_table[i], 0x08, 0x8E);
     }
 
     asm volatile("lidt (%0)" : : "r" (&idt_p));

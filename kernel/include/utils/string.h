@@ -2,7 +2,6 @@
 #define STRING_H
 
 #include <stddef.h>
-#include <stdint.h>
 
 int kstrncmp(const char* str1, const char* str2, size_t n);
 int kstreql(const char* ch1, const char* ch2);
