@@ -11,22 +11,22 @@ static struct line_data cursor = {0, 0};
 static void scroll_if_needed(void) {
     if (cursor.y < VGA_HEIGHT) return;
 
-    uint16_t *vga = (uint16_t *) VIDEO_MEMORY;
+    u16 *vga = (u16 *) VIDEO_MEMORY;
 
     int lines = cursor.y - (VGA_HEIGHT - 1);
     if (lines <= 0) return;
     if (lines > VGA_HEIGHT) lines = VGA_HEIGHT;
 
-    uint32_t bytes_per_row = VGA_WIDTH * sizeof(uint16_t);
-    uint32_t src_offset = lines * bytes_per_row;
-    uint32_t move_bytes = (VGA_HEIGHT * bytes_per_row) - src_offset;
+    u32 bytes_per_row = VGA_WIDTH * sizeof(u16);
+    u32 src_offset = lines * bytes_per_row;
+    u32 move_bytes = (VGA_HEIGHT * bytes_per_row) - src_offset;
 
-    kmemmove((void *)vga, (void *)((uint8_t*)vga + src_offset), move_bytes);
+    kmemmove((void *)vga, (void *)((u8*)vga + src_offset), move_bytes);
 
-    uint8_t att = ((DEFAULT_BACKGROUND_COLOR & 0x0F) << 4) | (DEFAULT_TEXT_COLOR & 0x0F);
-    uint16_t blank = (' ' | (att << 8));
+    u8 att = ((DEFAULT_BACKGROUND_COLOR & 0x0F) << 4) | (DEFAULT_TEXT_COLOR & 0x0F);
+    u16 blank = (' ' | (att << 8));
 
-    uint16_t *last_row = vga + (VGA_HEIGHT - lines) * VGA_WIDTH;
+    u16 *last_row = vga + (VGA_HEIGHT - lines) * VGA_WIDTH;
     for (int r = 0; r < lines; r++) {
         kmemset16(last_row + r * VGA_WIDTH, blank, VGA_WIDTH);
     }
@@ -139,8 +139,8 @@ void knew_line(void) {
 }
 
 void kclear_screen(void) {
-    uint16_t* vga = (uint16_t*) VIDEO_MEMORY;
-    uint16_t blank = (' ' | (DEFAULT_ATT << 8));
+    u16* vga = (u16*) VIDEO_MEMORY;
+    u16 blank = (' ' | (DEFAULT_ATT << 8));
 
     kmemset16(vga, blank, VGA_WIDTH * VGA_HEIGHT);
 

@@ -1,37 +1,38 @@
 #ifndef BUS_H
 #define BUS_H
 
+#include "utils/types.h"
 #include <stdint.h>
 
 /* in */
-static inline uint8_t inb(uint16_t port) {
-    uint8_t ret;
+static inline u8 inb(u16 port) {
+    u8 ret;
     __asm__ volatile("inb %1, %0" : "=a"(ret) : "Nd"(port));
     return ret;
 }
 
-static inline uint16_t inw(uint16_t port) {
-    uint16_t ret;
+static inline u16 inw(u16 port) {
+    u16 ret;
     __asm__ volatile("inw %1, %0" : "=a"(ret) : "Nd"(port));
     return ret;
 }
 
-static inline uint32_t inl(uint16_t port) {
-    uint32_t ret;
+static inline u32 inl(u16 port) {
+    u32 ret;
     __asm__ volatile("inl %1, %0" : "=a"(ret) : "Nd"(port));
     return ret;
 }
 
 /* out */
-static inline void outb(uint16_t port, uint8_t value) {
+static inline void outb(u16 port, u8 value) {
     __asm__ volatile("outb %0, %1" : : "a"(value), "Nd"(port));
 }
 
-static inline void outw(uint16_t port, uint16_t value) {
+static inline void outw(u16 port, u16 value) {
     __asm__ volatile("outw %0, %1" : : "a"(value), "Nd"(port));
 }
 
-static inline void outl(uint16_t port, uint32_t value) {
+static inline void outl(u16 port, u32 value) {
     __asm__ volatile("outl %0, %1" : : "a"(value), "Nd"(port));
 }
 
