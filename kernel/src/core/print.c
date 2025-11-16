@@ -8,6 +8,12 @@
 
 static struct line_data cursor = {0, 0};
 
+/*
+ * scroll_if_needed - scroll screen up if cursor exceeds VGA_HEIGHT
+ *
+ * Moves existing lines up and clears the new blank rows.
+ * Updates cursor.y to stay within visible area.
+ */
 static void scroll_if_needed(void) 
 {
     if (cursor.y < VGA_HEIGHT) 
@@ -37,7 +43,18 @@ static void scroll_if_needed(void)
     cursor.y = VGA_HEIGHT - 1;
 }
 
-
+/*
+ * printk & printk_color - variadic wrapper for vprint_color
+ *
+ * vprint_color expects a va_list already initialized.
+ * We cannot pass the variadic parameters ('...') directly
+ * without first initializing a va_list with va_start.
+ * This wrapper does exactly that: it creates and initializes
+ * args before passing them to vprint_color.
+ *
+ * Note: without this wrapper, the variadic list would be
+ * invalid and behavior would be undefined.
+ */
 void printk_color(char *msg, enum vga_color text, enum vga_color background,
                  ...) 
 {
