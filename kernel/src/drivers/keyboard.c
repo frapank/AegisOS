@@ -1,4 +1,24 @@
 #include "drivers/keyboard.h"
+
+/*
+* keyboard.c - Low-level PS/2 keyboard driver
+*
+* This driver handles keyboard input at the hardware level,
+* providing a simple ring buffer and character-level API.
+*
+* Architecture:
+*  - Keyboard generates scancodes via PS/2 controller (port 0x60)
+*  - Interrupt handler reads scancodes on key press/release
+*  - Modifier keys (Shift, Ctrl, Alt, CapsLock) are tracked separately
+*  - Scancodes are converted to ASCII using lookup tables, with
+*    support for shift-modified characters
+*
+* Concurrency / safety:
+*  - Buffer push/pop operation disable interrupts briefly
+*    to prevent race conditions betwen handler and readers
+*  - getch() block using hlt until new input is available
+*/
+
 #include "arch/io.h"
 
 /* Modificators */
@@ -8,6 +28,7 @@
 #define SC_ALT    0x38
 #define SC_CAPS   0x3A
 
+/* State of modifier keys */
 static volatile int shift_down = 0;
 static volatile int ctrl_down  = 0;
 
