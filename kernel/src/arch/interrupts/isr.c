@@ -85,13 +85,16 @@ static void (* const isr_handlers[32])(struct regs*) = {
     isr28_man, isr29_man, isr30_man, isr31_man
 };
 
-static void __attribute__((noreturn)) default_isr_handler(struct regs* regs){
+static void __attribute__((noreturn)) default_isr_handler(struct regs* regs)
+{
     printk_color("Unhandled isr %s...\n", VGA_COLOR_LIGHT_RED, VGA_COLOR_BLACK, exception_names[regs->int_no]);
     for (;;) { asm volatile("hlt"); } // Todo: Remove when panic are added
 }
 
-void __attribute__((cdecl)) i686_ISR_Handler(struct regs* regs) {
+void __attribute__((cdecl)) i686_ISR_Handler(struct regs* regs) 
+{
     u8 num = regs->int_no;
+
     if (likely(num < 32)) {
         isr_handlers[num](regs);
     } else {

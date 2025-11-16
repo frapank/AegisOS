@@ -32,7 +32,8 @@ static const struct command commands_list[] = {
 
 #define COMMAND_LIST_SIZE sizeof(commands_list)/sizeof(commands_list[0])
 
-static inline void check_command(char* cmd_name){
+static inline void check_command(char* cmd_name)
+{
     for(size_t i = 0; i < COMMAND_LIST_SIZE; i++){
         struct command cmd = commands_list[i];
         if(kstreql(cmd_name, cmd.identifier)){
@@ -40,11 +41,14 @@ static inline void check_command(char* cmd_name){
             return;
         }
     }
+
     printk_color("Command %s not found \n", VGA_COLOR_LIGHT_RED, VGA_COLOR_BLACK, cmd_name);
 }
 
-static void cmd_help_local(void){
+static void cmd_help_local(void)
+{
     printk_color("Commands list:\n", VGA_COLOR_LIGHT_BLUE, VGA_COLOR_BLACK);
+
     for(size_t i = 0; i < COMMAND_LIST_SIZE; i++){
         struct command cmd = commands_list[i];
         printk_color(" > %s: ", VGA_COLOR_YELLOW, VGA_COLOR_BLACK, cmd.identifier);
@@ -52,13 +56,18 @@ static void cmd_help_local(void){
     }
 }
 
-static int running = 0;
+#define COMMAND_MAX_INPUT 10
 
-void kshell_start(void) {
+static volatile int running = 0;
+
+void kshell_start(void) 
+{
     kclear_screen();
     cmd_about(); // Welcome message
+
     running = 1;
-    char command_buffer[10];
+
+    char command_buffer[COMMAND_MAX_INPUT];
     size_t index = 0;
     while(running == 1){
         for (;;){
@@ -95,6 +104,7 @@ void kshell_start(void) {
     }
 }
 
-void kshell_stop(void){
+void kshell_stop(void)
+{
     running = 0;
 }
