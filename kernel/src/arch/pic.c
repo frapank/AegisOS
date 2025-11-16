@@ -1,21 +1,21 @@
 #include "arch/pic.h"
-#include <stdint.h>
 #include "arch/io.h"
+#include "utils/types.h"
 
 #define PIC_MASTER_COMMAND 0x20
-#define PIC_MASTER_DATA 0x21
-#define PIC_SLAVE_COMMAND 0xA0
-#define PIC_SLAVE_DATA 0xA1
+#define PIC_MASTER_DATA    0x21
+#define PIC_SLAVE_COMMAND  0xA0
+#define PIC_SLAVE_DATA     0xA1
 
 #define INIT_AND_WAIT_ICW4 0x11
 
-#define OFFSET_MASTER 0x20
-#define OFFSET_SLAVE 0x28
+#define OFFSET_MASTER      0x20
+#define OFFSET_SLAVE       0x28
 
 void static pic_remap(void){
     // Save the mask
-    uint8_t mask1 = inb(PIC_MASTER_DATA);
-    uint8_t mask2 = inb(PIC_SLAVE_DATA);
+    u8 mask1 = inb(PIC_MASTER_DATA);
+    u8 mask2 = inb(PIC_SLAVE_DATA);
 
     // Send ICW1
     outb(PIC_MASTER_COMMAND, INIT_AND_WAIT_ICW4);

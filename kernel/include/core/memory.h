@@ -1,11 +1,12 @@
 #ifndef MEMORY_H
 #define MEMORY_H
 
-#include <stdint.h>
-void* kmemset(void* ptr, uint8_t value, uint32_t count);
-void* kmemset16(void* ptr, uint16_t value, uint32_t count);
-void* kmemset32(void* ptr, uint32_t value, uint32_t count);
+#include "utils/types.h"
 
-void *kmemmove(void *dest, const void *src, unsigned int n);
+void* kmemset(void* ptr, u8 value, u32 count);
+void* kmemset16(void* ptr, u16 value, u32 count);
+void* kmemset32(void* ptr, u32 value, u32 count);
+
+void *kmemmove(void *dest, const void *src, size_t n);
 
 #endif

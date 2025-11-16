@@ -1,6 +1,7 @@
 #include "core/format.h"
 
 void int_to_ascii(int n, char* buffer){
+
     char temp[10];
     int i = 0;
 
@@ -13,15 +14,16 @@ void int_to_ascii(int n, char* buffer){
     for(int j = 0; j < i; j++){
         buffer[j] = temp[i - j - 1];
     }
+
     buffer[i] = 0;
 }
 
-void uint_to_hex(uint32_t n, char* buffer) {
+void uint_to_hex(u32 n, char* buffer) {
     buffer[0] = '0';
     buffer[1] = 'x';
 
     for (int i = 0; i < 8; i++) {
-        uint8_t nibble = (n >> (28 - i * 4)) & 0xF;
+        u8 nibble = (n >> (28 - i * 4)) & 0xF;
         if (nibble < 10)
             buffer[2 + i] = '0' + nibble;
         else

@@ -1,8 +1,9 @@
 #include "arch/interrupts/isr.h"
 #include "core/print.h"
 #include "utils/defhelp.h"
+#include "utils/types.h"
 
-static const char* const exception_names[32] = {
+static char* const exception_names[32] = {
     "0: Division for zero",
     "1: Debug",
     "2: Non maskable interrupt (NMI)",
@@ -90,7 +91,7 @@ static void __attribute__((noreturn)) default_isr_handler(struct regs* regs){
 }
 
 void __attribute__((cdecl)) i686_ISR_Handler(struct regs* regs) {
-    uint8_t num = regs->int_no;
+    u8 num = regs->int_no;
     if (likely(num < 32)) {
         isr_handlers[num](regs);
     } else {
