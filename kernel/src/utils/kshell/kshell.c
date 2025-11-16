@@ -1,9 +1,29 @@
 #include "utils/kshell/kshell.h"
 
 /*
-* Minimal kernel shell implementation.
-* Used for debugging and executing simple commands from keyboard input.
-* Each command currently accepts no arguments.
+* kshell.c - Minimal kernel shell implementation
+*
+* This is a simple, built-in kernel shell used for debugging
+* and executing a small set of commands via keyboard input.
+* 
+* Architecture and logic:
+*  - The shell reads characters from the keyboard using getch().
+*  - Characters are bufered until the Enter key is pressed.
+*  - Input is compared against a static list of commands.
+*  - Each command has an identifier, a help string, and a function pointer.
+*  - Matching command executes its corresponding function.
+*
+* Features:
+*  - Comand execution supports no arguments (single word commands).
+*  - Builtin commands: clear, exit, help, about, binfo.
+*  - Feedback is printed to the VGA console using printk_color().
+*  - Handles backspace to edit the command buffer.
+*  - Input buffer is limited to COMMAND_MAX_INPUT characters.
+*
+* Notes:
+*  - The shell runs in the main kernel context; no threads or multitasking.
+*  - It uses only low-level kernel facilities (VGA output, keyboard driver).
+*  - Designed for simplicity and clarity, mainly for debugging purposes.
 */
 
 #include <stddef.h>
