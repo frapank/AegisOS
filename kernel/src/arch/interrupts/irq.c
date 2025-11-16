@@ -1,8 +1,8 @@
 #include "arch/interrupts/irq.h"
 #include "core/print.h"
 #include "drivers/keyboard.h"
-#include <stdint.h>
 #include "utils/defhelp.h"
+#include "utils/types.h"
 
 static void default_irq_handler(struct regs* regs){
     (void)regs;
@@ -39,7 +39,7 @@ static void (* const irq_handlers[16])(struct regs*) = {
 };
 
 void __attribute__((cdecl)) i686_IRQ_Handler(struct regs* regs){
-    uint8_t irq = (uint8_t) regs->int_no;
+    u8 irq = (u8) regs->int_no;
     if (likely(irq >= 0x20)) irq -= 0x20;
     
     if (unlikely(irq >= 16)) {

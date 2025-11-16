@@ -1,7 +1,7 @@
 #ifndef REGISTERS_H
 #define REGISTERS_H
 
-#include <stdint.h>
+#include "utils/types.h"
 
 // Order:
 //   pusha        < eax ecx ... edi
@@ -18,28 +18,28 @@
 //   push eax
 
 typedef struct regs {
-    uint32_t gs;
-    uint32_t fs;
-    uint32_t es;
-    uint32_t ds;
+    u32 gs;
+    u32 fs;
+    u32 es;
+    u32 ds;
 
-    uint32_t edi;
-    uint32_t esi;
-    uint32_t ebp;
-    uint32_t esp;
-    uint32_t ebx;
-    uint32_t edx;
-    uint32_t ecx;
-    uint32_t eax;
+    u32 edi;
+    u32 esi;
+    u32 ebp;
+    u32 esp;
+    u32 ebx;
+    u32 edx;
+    u32 ecx;
+    u32 eax;
 
-    uint32_t int_no;
-    uint32_t err_code;
+    u32 int_no;
+    u32 err_code;
 
-    uint32_t eip;
-    uint32_t cs;
-    uint32_t eflags;
-    uint32_t useresp;
-    uint32_t ss;
+    u32 eip;
+    u32 cs;
+    u32 eflags;
+    u32 useresp;
+    u32 ss;
 } __attribute__((packed)) regs_t;
 
 #endif

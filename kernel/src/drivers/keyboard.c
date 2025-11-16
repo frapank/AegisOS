@@ -1,6 +1,5 @@
 #include "drivers/keyboard.h"
 #include "arch/io.h"
-#include <stdint.h>
 
 /* Modificators */
 #define SC_LSHIFT 0x2A
@@ -15,9 +14,9 @@ static volatile int ctrl_down  = 0;
 /* Ring */
 #define KEYBOARD_BUFFER_LIMIT 255
 
-static volatile uint16_t kbd_keys[KEYBOARD_BUFFER_LIMIT];
-static volatile uint16_t kbd_head = 0; // Next slot to write
-static volatile uint16_t kbd_tail = 0; // Next slot to read
+static volatile u16 kbd_keys[KEYBOARD_BUFFER_LIMIT];
+static volatile u16 kbd_head = 0; // Next slot to write
+static volatile u16 kbd_tail = 0; // Next slot to read
 
 /* Conversion */
 static const char scancode_to_ascii[128] = {
@@ -47,19 +46,19 @@ static inline int kbd_is_empty(void) {
     return kbd_head == kbd_tail;
 }
 
-static void kbd_buffer_push(uint16_t char_code){
-    uint16_t next = (kbd_head + 1) % KEYBOARD_BUFFER_LIMIT;
+static void kbd_buffer_push(u16 char_code){
+    u16 next = (kbd_head + 1) % KEYBOARD_BUFFER_LIMIT;
     if (next == kbd_tail) return; // Ignore
     
     kbd_keys[kbd_head] = char_code;
     kbd_head = next;
 }
 
-static uint16_t kbd_buffer_pop(void){
-    uint16_t ret_val = -1;
+static u16 kbd_buffer_pop(void){
+    u16 ret_val = -1;
     cli();
     if(!kbd_is_empty()){
-        ret_val = (uint16_t)kbd_keys[kbd_tail];
+        ret_val = (u16)kbd_keys[kbd_tail];
         kbd_tail = (kbd_tail + 1) % KEYBOARD_BUFFER_LIMIT;
     }
     sti();
@@ -78,9 +77,9 @@ char getch(void){
 
 void keyboard_interrupt_handler(void){
 
-    uint8_t sc = inb(0x60);
-    uint8_t key = sc & 0x7F;
-    uint8_t released = sc & 0x80;
+    u8 sc = inb(0x60);
+    u8 key = sc & 0x7F;
+    u8 released = sc & 0x80;
 
     if (key == SC_LSHIFT || key == SC_RSHIFT) {
         if (released) shift_down = 0;
