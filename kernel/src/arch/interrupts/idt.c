@@ -55,7 +55,8 @@ static void (*irq_table[16])() = {
 struct idt_entry idt[256] __attribute__((aligned(16)));
 struct idt_pointer idt_p __attribute__((aligned(16)));
 
-static inline void set_idt_entry(u8 num, u32 base, u16 sel, u8 flags) {
+static inline void set_idt_entry(u8 num, u32 base, u16 sel, u8 flags) 
+{
     idt[num].offset_low  = base & 0xFFFF;
     idt[num].selector    = sel;
     idt[num].zero        = 0;
@@ -63,7 +64,8 @@ static inline void set_idt_entry(u8 num, u32 base, u16 sel, u8 flags) {
     idt[num].offset_high = (base >> 16) & 0xFFFF;
 }
 
-void idt_init(void){
+void idt_init(void)
+{
     idt_p.limit = sizeof(idt) - 1;
     idt_p.base = (u32)&idt;
 
@@ -77,15 +79,12 @@ void idt_init(void){
     }
 
     // Set isr
-    for (int i = 0; i < 32; i++) {
+    for (int i = 0; i < 32; i++)
         set_idt_entry(i, (u32)isr_table[i], 0x08, 0x8E);
-    }
-
+    
     // Set irq
-    for (int i = 0; i < 16; i++) {
+    for (int i = 0; i < 16; i++) 
         set_idt_entry(0x20 + i, (u32)irq_table[i], 0x08, 0x8E);
-    }
 
     asm volatile("lidt (%0)" : : "r" (&idt_p));
-
 }
