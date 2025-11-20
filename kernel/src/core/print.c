@@ -157,14 +157,14 @@ void vprint_color(char *msg, enum vga_color text, enum vga_color background,
     }
 }
 
-void knew_line(void)
+void new_linek(void)
 {
     cursor.x = 0;
     cursor.y++;
     scroll_if_needed();
 }
 
-void kclear_screen(void)
+void clear_screenk(void)
 {
     u16* vga = (u16*) VIDEO_MEMORY;
     u16 blank = (' ' | (DEFAULT_ATT << 8));

@@ -5,12 +5,12 @@
 /* Commands execute */
 void cmd_clear(void)
 {
-    kclear_screen();
+    clear_screenk();
 }
 
 void cmd_exit(void)
 {
-    kclear_screen();
+    clear_screenk();
     kshell_stop();
 }
 
