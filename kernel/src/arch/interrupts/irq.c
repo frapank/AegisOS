@@ -27,7 +27,8 @@ UNDECLARED_IRQ(13);
 UNDECLARED_IRQ(14);
 UNDECLARED_IRQ(15);
 
-static void irq1_man(struct regs *r){
+static void irq1_man(struct regs *r)
+{
     keyboard_interrupt_handler();
 }
 
@@ -38,9 +39,11 @@ static void (* const irq_handlers[16])(struct regs*) = {
     irq12_man, irq13_man, irq14_man, irq15_man
 };
 
-void __attribute__((cdecl)) i686_IRQ_Handler(struct regs* regs){
+void __attribute__((cdecl)) i686_IRQ_Handler(struct regs* regs)
+{
     u8 irq = (u8) regs->int_no;
-    if (likely(irq >= 0x20)) irq -= 0x20;
+    if (likely(irq >= 0x20)) 
+        irq -= 0x20;
     
     if (unlikely(irq >= 16)) {
         printk_color("Unknown irq number: %d\n", VGA_COLOR_LIGHT_RED, VGA_COLOR_BLACK, irq);
