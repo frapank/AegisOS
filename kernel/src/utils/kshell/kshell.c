@@ -82,7 +82,7 @@ static volatile int running = 0;
 
 void kshell_start(void) 
 {
-    kclear_screen();
+    clear_screenk();
     cmd_about(); // Welcome message
 
     running = 1;
@@ -95,7 +95,7 @@ void kshell_start(void)
 
             // Enter: Process comands
             if (c == '\n') {
-                knew_line();
+                new_linek();
                 command_buffer[index] = '\0';
                 check_command(command_buffer);
                 index = 0;
