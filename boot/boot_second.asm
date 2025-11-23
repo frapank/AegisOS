@@ -3,6 +3,7 @@ org 0x1000
 
 second_stage:
 
+
     ; Print welcome ascii 
     ; mov si, ascii_n = argument
     mov si, ascii_1
@@ -25,6 +26,8 @@ second_stage:
     call print_string
 
     call wait_key                   ; Wait for key press
+
+    mov dl, [0x7E00]                ; Get the saved boot_sector
 
     call read_disk                  ; Read kernel from disk
     call start_protected            ; Switch to protected mode
@@ -65,8 +68,6 @@ read_disk:
     mov ch, 0x00                ; Cylinder 0
     mov cl, KERNEL_START_SECTOR ; Start sector
     mov dh, 0x00                ; Head 0
-    mov dl, 0x80                ; Drive number (0x80 = first HDD) ( should change ) 
-    ;TODO: Make dl pass boot_disk from boot.asm
     int 0x13                    ; BIOS disk interrupt
     jc disk_error               ; Jump if carry flag set (error)
     ret                         ; Return if success
