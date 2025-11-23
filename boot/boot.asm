@@ -17,6 +17,7 @@ start:
 
     ; Set boot disk
     mov [boot_disk], dl     ; Store boot drive into boot_disk (used in read_disk)
+    mov byte [0x7E00], dl
 
     call clear_screen
 
@@ -49,7 +50,7 @@ read_disk:
     mov ch, 0x00                ; Cylinder 0
     mov cl, STAGE_START_SECTOR  ; Starting sector
     mov dh, 0x00                ; Head 0
-    mov dl, [boot_disk]         ; Drive number
+    mov dl, [0x7E00]            ; Drive number
     int 0x13                    ; BIOS disk interrupt
     jc disk_error               ; Jump if carry flag set (error)
     ret                         ; Return if successful
