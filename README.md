@@ -5,6 +5,14 @@ I want to see how far I can take it.
 
 ---
 
+## Documentation
+
+A growing set of technical documents explaining the internals of the OS can be found here:
+
+* [docs/index.md](docs/index.md)
+
+---
+
 ## How It Works
 
 ![Screenshot](screen.png)
