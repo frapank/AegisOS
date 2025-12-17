@@ -1,3 +1,7 @@
+; ----------------------
+; |    Second Stage    |
+; ----------------------
+
 [bits 16]
 org 0x1000
 
@@ -13,19 +17,19 @@ second_stage:
     call read_disk              ; Read kernel from disk
     call start_protected        ; Switch to protected mode
 
-;----------------
+; ----------------------
 ; Data
 msg_disk_error      db "[-] Error while reading the disk",0Dh,0Ah,0
 
-ascii_screen db "+---------------------------------+",0Dh,0Ah
-             db "|         LAIN BOOTLOADER         |",0Dh,0Ah
-             db "|                                 |",0Dh,0Ah
-             db "|  Welcome to the official LainOS |",0Dh,0Ah
-             db "|            bootloader           |",0Dh,0Ah
-             db "|                                 |",0Dh,0Ah
-             db "|      Press a key to continue    |",0Dh,0Ah
-             db "|                                 |",0Dh,0Ah
-             db "+---------------------------------+",0Dh,0Ah,0
+ascii_screen        db "+---------------------------------+",0Dh,0Ah
+                    db "|         LAIN BOOTLOADER         |",0Dh,0Ah
+                    db "|                                 |",0Dh,0Ah
+                    db "|  Welcome to the official LainOS |",0Dh,0Ah
+                    db "|            bootloader           |",0Dh,0Ah
+                    db "|                                 |",0Dh,0Ah
+                    db "|      Press a key to continue    |",0Dh,0Ah
+                    db "|                                 |",0Dh,0Ah
+                    db "+---------------------------------+",0Dh,0Ah,0
 
 CODE_SEG            equ gdt_code - gdt_start   ; Offset of code segment in GDT
 DATA_SEG            equ gdt_data - gdt_start   ; Offset of data segment in GDT
@@ -33,11 +37,14 @@ KERNEL_LOCATION     equ 0x2000                 ; Load address of kernel
 KERNEL_SECTORS      equ 13                     ; Number of sectors to read
 KERNEL_START_SECTOR equ 4                      ; Start sector on disk
 
+; ----------------------
+; Includes
 %include "boot/graphics.asm" ; Include (copy) print_string, clear_screen and wait_key
 %include "boot/disk.asm"     ; Include 'read_disk', require:
                              ; msg_disk_error, KERNEL_SECTOR, KERNEL_START_SECTOR
                              ; and KERNEL_LOCATION
-;----------------
+
+; ----------------------
 ; Protected mode setup
 start_protected:
     cli                                 ; Disable interrupts
@@ -50,7 +57,7 @@ start_protected:
     mov cr0, eax
     jmp CODE_SEG:start_protected_mode   ; Far jump to flush prefetch queue
 
-;----------------
+; ----------------------
 ; Global Descriptor Table
 gdt_start:
 
@@ -80,7 +87,7 @@ gdt_descriptor:
     dw gdt_end - gdt_start - 1  ; Size of GDT
     dd gdt_start                ; Address of GDT
 
-;----------------
+; ----------------------
 ; Protected mode entry
 [bits 32]
 start_protected_mode:

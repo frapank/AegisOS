@@ -1,5 +1,7 @@
-;----------------
-; Graphics
+; ----------------------
+; |     Graphics       |
+; ----------------------
+
 print_string:
     mov ah, 0x0e            ; BIOS display function
     .print_loop:
@@ -20,7 +22,7 @@ clear_screen:
     mov dh, 24-1            ; Lower right row
     mov dl, 80-1            ; Lower right column
     int 0x10                ; BIOS video interrupt to scroll
-    
+
     mov ah, 0x02            ; Set cursor position
     xor bh, bh              ; Page number
     xor dh, dh              ; Row = 0
