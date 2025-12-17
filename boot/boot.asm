@@ -1,3 +1,7 @@
+; ----------------------
+; |    First Stage     |
+; ----------------------
+
 [bits 16]
 org 0x7c00
 
@@ -27,13 +31,16 @@ start:
 
 ;----------------
 ; Data
-msg_disk_error      db "[-] Can't find second stage, stopped" ,0Dh,0Ah,0
+msg_disk_error          db "[-] Can't find second stage, stopped" ,0Dh,0Ah,0
 
-boot_disk           db  0         ; Store boot drive number
-STAGE_LOCATION      equ 0x1000    ; Load address for second stage
-STAGE_SECTORS       equ 2         ; Number of sectors to read
-STAGE_START_SECTOR  equ 2         ; First sector of second stage
+boot_disk               db  0         ; Store boot drive number
+STAGE_LOCATION          equ 0x1000    ; Load address for second stage
+STAGE_SECTORS           equ 2         ; Number of sectors to read
+STAGE_START_SECTOR      equ 2         ; First sector of second stage
 
+
+;------------------
+; Includes
 %include "boot/graphics.asm" ; Include (copy) print_string, clear_screen and wait_key
 
 ;------------------

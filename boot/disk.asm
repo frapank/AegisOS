@@ -1,5 +1,7 @@
-;----------------
-; Disk operations
+; ----------------------
+; |   Disk operations  |
+; ----------------------
+
 read_disk:
     cli
     xor ax, ax
