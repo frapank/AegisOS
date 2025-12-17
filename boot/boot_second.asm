@@ -3,27 +3,8 @@ org 0x1000
 
 second_stage:
 
-
-    ; Print welcome ascii 
-    ; mov si, ascii_n = argument
-    mov si, ascii_1
-    call print_string
-    mov si, ascii_2
-    call print_string
-    mov si, ascii_3
-    call print_string
-    mov si, ascii_4
-    call print_string
-    mov si, ascii_5
-    call print_string
-    mov si, ascii_6
-    call print_string
-    mov si, ascii_7
-    call print_string
-    mov si, ascii_8
-    call print_string
-    mov si, ascii_9
-    call print_string
+    mov si, ascii_screen
+    call print_string           ; Print welcome screen
 
     call wait_key               ; Wait for key press
 
@@ -36,15 +17,15 @@ second_stage:
 ; Data
 msg_disk_error      db "[-] Error while reading the disk",0Dh,0Ah,0
 
-ascii_1             db "+---------------------------------+",0Dh,0Ah,0
-ascii_2             db "|         LAIN BOOTLOADER         |",0Dh,0Ah,0
-ascii_3             db "|                                 |",0Dh,0Ah,0
-ascii_4             db "|  Welcome to the official LainOS |",0Dh,0Ah,0
-ascii_5             db "|            bootloader           |",0Dh,0Ah,0
-ascii_6             db "|                                 |",0Dh,0Ah,0
-ascii_7             db "|      Press a key to continue    |",0Dh,0Ah,0
-ascii_8             db "|                                 |",0Dh,0Ah,0
-ascii_9             db "+---------------------------------+",0Dh,0Ah,0
+ascii_screen db "+---------------------------------+",0Dh,0Ah
+             db "|         LAIN BOOTLOADER         |",0Dh,0Ah
+             db "|                                 |",0Dh,0Ah
+             db "|  Welcome to the official LainOS |",0Dh,0Ah
+             db "|            bootloader           |",0Dh,0Ah
+             db "|                                 |",0Dh,0Ah
+             db "|      Press a key to continue    |",0Dh,0Ah
+             db "|                                 |",0Dh,0Ah
+             db "+---------------------------------+",0Dh,0Ah,0
 
 CODE_SEG            equ gdt_code - gdt_start   ; Offset of code segment in GDT
 DATA_SEG            equ gdt_data - gdt_start   ; Offset of data segment in GDT
