@@ -21,15 +21,15 @@ second_stage:
 ; Data
 msg_disk_error      db "[-] Error while reading the disk",0Dh,0Ah,0
 
-ascii_screen        db "+---------------------------------+",0Dh,0Ah
-                    db "|         LAIN BOOTLOADER         |",0Dh,0Ah
-                    db "|                                 |",0Dh,0Ah
-                    db "|  Welcome to the official LainOS |",0Dh,0Ah
-                    db "|            bootloader           |",0Dh,0Ah
-                    db "|                                 |",0Dh,0Ah
-                    db "|      Press a key to continue    |",0Dh,0Ah
-                    db "|                                 |",0Dh,0Ah
-                    db "+---------------------------------+",0Dh,0Ah,0
+ascii_screen        db "+--------------------------------+",0Dh,0Ah
+                    db "|                                |",0Dh,0Ah
+                    db "|         L A I N   O S          |",0Dh,0Ah
+                    db "|                                |",0Dh,0Ah
+                    db "|     experimental bootloader    |",0Dh,0Ah
+                    db "|                                |",0Dh,0Ah
+                    db "|    press any key to continue   |",0Dh,0Ah
+                    db "|                                |",0Dh,0Ah
+                    db "+--------------------------------+",0Dh,0Ah,0
 
 CODE_SEG            equ gdt_code - gdt_start   ; Offset of code segment in GDT
 DATA_SEG            equ gdt_data - gdt_start   ; Offset of data segment in GDT
