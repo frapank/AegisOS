@@ -31,6 +31,10 @@ ascii_screen        db "+--------------------------------+",0Dh,0Ah
                     db "|                                |",0Dh,0Ah
                     db "+--------------------------------+",0Dh,0Ah,0
 
+BOOT_INFO_ADDR      equ 0x9000                 ;
+BOOT_MODE           equ BOOT_INFO_ADDR+0
+BOOT_FLAGS          equ BOOT_INFO_ADDR+1
+
 CODE_SEG            equ gdt_code - gdt_start   ; Offset of code segment in GDT
 DATA_SEG            equ gdt_data - gdt_start   ; Offset of data segment in GDT
 KERNEL_LOCATION     equ 0x2000                 ; Load address of kernel
@@ -102,6 +106,11 @@ start_protected_mode:
     mov ebp, 0x90000        ; Setup stack base
     mov esp, ebp            ; Initialize stack pointer
 
+    mov byte  [BOOT_MODE], 4
+    mov byte  [BOOT_FLAGS], 0
+
+    mov eax, 0x1BADB002
+    mov ebx, BOOT_INFO_ADDR
     jmp KERNEL_LOCATION     ; Jump to loaded kernel
 
 times 1024 - ($ - $$) db 0
