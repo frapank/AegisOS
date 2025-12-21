@@ -29,10 +29,3 @@ clear_screen:
     xor dl, dl              ; Column = 0
     int 0x10                ; BIOS interrupt to set cursor
     ret
-
-wait_key:
-    sti                     ; Enable interrupts
-    mov ah, 0x00            ; BIOS keyboard input function
-    int 0x16                ; Wait for keypress
-    cli                     ; Disable interrupts again
-    ret                     ; Return from function
