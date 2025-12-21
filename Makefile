@@ -28,7 +28,8 @@ kernel: boot
 	$(GCC) $(GCC_FLAGS) $(INCLUDE_FLAGS) -c $(SRC_DIR)/core/format.c                     -o $(BUILD_DIR)/format.o
 	$(GCC) $(GCC_FLAGS) $(INCLUDE_FLAGS) -c $(SRC_DIR)/core/print.c                      -o $(BUILD_DIR)/print.o
 	$(GCC) $(GCC_FLAGS) $(INCLUDE_FLAGS) -c $(SRC_DIR)/core/memory.c                     -o $(BUILD_DIR)/memory.o
-	$(GCC) $(GCC_FLAGS) $(INCLUDE_FLAGS) -c $(SRC_DIR)/core/boot_info.c                 -o $(BUILD_DIR)/boot_info.o
+	$(GCC) $(GCC_FLAGS) $(INCLUDE_FLAGS) -c $(SRC_DIR)/core/boot_info.c                  -o $(BUILD_DIR)/boot_info.o
+	$(GCC) $(GCC_FLAGS) $(INCLUDE_FLAGS) -c $(SRC_DIR)/core/panic.c                      -o $(BUILD_DIR)/panic.o
 	$(GCC) $(GCC_FLAGS) $(INCLUDE_FLAGS) -c $(SRC_DIR)/drivers/vga/vga.c                 -o $(BUILD_DIR)/vga.o
 	$(GCC) $(GCC_FLAGS) $(INCLUDE_FLAGS) -c $(SRC_DIR)/drivers/keyboard.c                -o $(BUILD_DIR)/keyboard.o
 	$(GCC) $(GCC_FLAGS) $(INCLUDE_FLAGS) -c $(SRC_DIR)/arch/pic.c                        -o $(BUILD_DIR)/pic.o
@@ -49,6 +50,7 @@ kernel: boot
 	    $(BUILD_DIR)/vga.o \
 	    $(BUILD_DIR)/keyboard.o \
 	    $(BUILD_DIR)/boot_info.o \
+	    $(BUILD_DIR)/panic.o \
 		$(BUILD_DIR)/idt.o \
 	    $(BUILD_DIR)/isr.o \
 	    $(BUILD_DIR)/irq.o \
