@@ -88,7 +88,7 @@ static void (* const isr_handlers[32])(struct regs*) = {
 
 static void __attribute__((noreturn)) default_isr_handler(struct regs* regs)
 {
-    panick("Unhandled isr!");
+    panick(exception_names[regs->int_no]);
     for(;;);
 }
 
