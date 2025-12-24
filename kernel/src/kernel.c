@@ -21,5 +21,5 @@ void kernel_main(u32 magic, u32 boot_info)
 
     kshell_start();
 
-    panick("No programming running");
+    panick("No programs running");
 }
