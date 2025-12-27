@@ -144,6 +144,8 @@ void vprint_color(char *msg, enum vga_color text, enum vga_color background,
                     break;
                 }
 
+                break;
+
             default:
                 if (cursor.x >= VGA_WIDTH) {
                     cursor.x = 0;
