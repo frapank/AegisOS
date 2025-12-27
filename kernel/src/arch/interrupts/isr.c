@@ -40,7 +40,7 @@ static char* const exception_names[32] = {
 };
 
 #define UNDECLARED_ISR(n) \
-void isr##n##_man(struct regs *r) __attribute__((alias("default_isr_handler")))
+void isr##n##_man(struct regs *r) __attribute__((noreturn, alias("default_isr_handler")))
 
 UNDECLARED_ISR(0);
 UNDECLARED_ISR(1);
@@ -99,8 +99,7 @@ void __attribute__((cdecl)) i686_ISR_Handler(struct regs* regs)
     if (likely(num < 32)) {
         isr_handlers[num](regs);
     } else {
-        printk_color("Unknown interrupt number: %d\n", VGA_COLOR_LIGHT_RED, VGA_COLOR_BLACK, num);
-        for (;;) { asm volatile("hlt"); } // Todo: Remove when panic are added
+        panick("Invalid interrupt number\n");
     }
 }
 
