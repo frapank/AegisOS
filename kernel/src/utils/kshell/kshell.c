@@ -87,7 +87,7 @@ void kshell_start(void)
 
     running = 1;
 
-    char command_buffer[COMMAND_MAX_INPUT];
+    char command_buffer[COMMAND_MAX_INPUT] = {0};
     size_t index = 0;
     while(running == 1){
         for (;;){
@@ -95,6 +95,7 @@ void kshell_start(void)
 
             // Enter: Process comands
             if (c == '\n') {
+                if(command_buffer[0] == '\0') break;
                 new_linek();
                 command_buffer[index] = '\0';
                 check_command(command_buffer);
