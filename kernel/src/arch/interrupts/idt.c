@@ -86,5 +86,5 @@ void idt_init(void)
     for (int i = 0; i < 16; i++) 
         set_idt_entry(0x20 + i, (u32)irq_table[i], 0x08, 0x8E);
 
-    asm volatile("lidt (%0)" : : "r" (&idt_p));
+    __asm__ volatile("lidt (%0)" : : "r" (&idt_p));
 }
