@@ -1,24 +1,24 @@
 # -- Vars --
-ASM := nasm
-CAT := cat
-GCC := i386-elf-gcc
-LD := i386-elf-ld
-OBJCOPY := i386-elf-objcopy
+ASM 			:= nasm
+CAT 			:= cat
+GCC 			:= i386-elf-gcc
+LD 				:= i386-elf-ld
+OBJCOPY 		:= i386-elf-objcopy
 
-BUILD_DIR := build
-BOOT_DIR := boot
-SRC_DIR := kernel/src
-INC_DIR := kernel/include
-LINK_FILE := link.ld
+BUILD_DIR 		:= build
+BOOT_DIR 		:= boot
+SRC_DIR 		:= kernel/src
+INC_DIR 		:= kernel/include
+LINK_FILE 		:= link.ld
 
-GCC_FLAGS := -ffreestanding -m32 -O2 -fno-omit-frame-pointer -g \
+GCC_FLAGS 		:= -ffreestanding -m32 -O2 -fno-omit-frame-pointer -g \
 				   -fno-stack-protector -fno-builtin -fno-common -march=i686 \
-				   -mtune=i686 -pipe
-ASM_DFLAGS := -g -F dwarf
-INCLUDE_FLAGS := -I$(INC_DIR)
+				   -mtune=i686 -Wall -Wextra -Wpedantic -std=c17 -pipe 
+ASM_DFLAGS 		:= -g -F dwarf
+INCLUDE_FLAGS 	:= -I$(INC_DIR)
 
-SRC_FILES := $(shell find $(SRC_DIR) -type f -name "*.c")
-OBJ_FILES := $(SRC_FILES:$(SRC_DIR)/%.c=$(BUILD_DIR)/%.o)
+SRC_FILES 		:= $(shell find $(SRC_DIR) -type f -name "*.c")
+OBJ_FILES 		:= $(SRC_FILES:$(SRC_DIR)/%.c=$(BUILD_DIR)/%.o)
 
 # -- Compile --
 all: boot kernel
@@ -53,7 +53,8 @@ kernel: boot $(BUILD_DIR)/kernel_entry.o $(BUILD_DIR)/isr_asm.o $(OBJ_FILES)
 
 # Utils
 run: all
-	qemu-system-x86_64 -hda $(BUILD_DIR)/everything.bin -boot c
+	qemu-system-x86_64 -drive file=$(BUILD_DIR)/everything.bin,format=raw -m 512M \
+		-enable-kvm -boot c -serial stdio
 
 tools:
 	@echo "[*] Installing in '~/usr/local/i386elfgcc'"
