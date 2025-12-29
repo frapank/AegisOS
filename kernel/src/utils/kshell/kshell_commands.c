@@ -2,6 +2,15 @@
 #include "core/print.h"
 #include "utils/kshell/kshell.h"
 
+static char* about_msg[] = {
+    "==================================\n"
+    "           LainOS KShell          \n"
+    "  Type help to view all commands  \n"
+    "==================================\n"
+};
+
+static int about_msg_len = sizeof(about_msg) / sizeof(about_msg[0]);
+
 /* Commands execute */
 void cmd_clear(void)
 {
@@ -16,10 +25,9 @@ void cmd_exit(void)
 
 void cmd_about(void)
 {
-    printk_color("     LainOS Minimal Shell     \n", VGA_COLOR_BLACK, VGA_COLOR_WHITE);
-    printk_color("                              \n", VGA_COLOR_BLACK, VGA_COLOR_WHITE);
-    printk_color("     Type help to view all    \n", VGA_COLOR_BLACK, VGA_COLOR_WHITE);
-    printk_color("          commands            \n", VGA_COLOR_BLACK, VGA_COLOR_WHITE);
+    for(int i = 0; i < about_msg_len; i++) {
+        printk(about_msg[i]);
+    }
 }
 
 void cmd_binfo(void)
