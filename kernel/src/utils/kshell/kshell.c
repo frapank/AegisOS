@@ -32,7 +32,6 @@
 #include "drivers/vga/vga.h"
 #include "utils/string.h"
 #include "utils/kshell/kshell_commands.h"
-#include "core/memory.h"
 
 static void cmd_help_local(void);
 
@@ -43,11 +42,12 @@ struct command {
 };
 
 static const struct command commands_list[] = {
-    { "clear", "Clear the console",  cmd_clear },
-    { "exit",  "Exit shell",         cmd_exit  },
-    { "help",  "Print help",         cmd_help_local  },
-    { "about", "Print start screen", cmd_about  },
-    { "binfo", "All build info",     cmd_binfo  },
+    { "clear", "Clear the console",  cmd_clear      },
+    { "exit",  "Exit shell",         cmd_exit       },
+    { "help",  "Print help",         cmd_help_local },
+    { "about", "Print start screen", cmd_about      },
+    { "binfo", "All build info",     cmd_binfo      },
+    { "echo",  "Print a message",    cmd_echo       },
 };
 
 #define COMMAND_LIST_SIZE sizeof(commands_list)/sizeof(commands_list[0])
@@ -76,7 +76,8 @@ static void cmd_help_local(void)
     }
 }
 
-#define COMMAND_MAX_INPUT 10
+#define COMMAND_MAX_INPUT   10
+#define PRINT_PREFIX        printk("$ ")
 
 static volatile int running = 0;
 
@@ -89,13 +90,17 @@ void kshell_start(void)
 
     char command_buffer[COMMAND_MAX_INPUT] = {0};
     size_t index = 0;
+    PRINT_PREFIX;
     while(running == 1){
         for (;;){
             char c = getch();
 
             // Enter: Process comands
             if (c == '\n') {
-                if(command_buffer[0] == '\0') break;
+                if(command_buffer[0] == '\0') {
+                    new_linek();
+                    break;
+                }
                 new_linek();
                 command_buffer[index] = '\0';
                 check_command(command_buffer);
@@ -122,6 +127,7 @@ void kshell_start(void)
                 }
             }
         }
+        PRINT_PREFIX;
     }
 }
 
