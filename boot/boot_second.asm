@@ -29,15 +29,13 @@ msg_boot_options    db "Press a number to select an option:",0Dh,0Ah
                     db "[1] Normal mode",0Dh,0Ah
                     db "[2] Debug mode",0Dh,0Ah,0
 
-ascii_screen        db "+--------------------------------+",0Dh,0Ah
-                    db "|                                |",0Dh,0Ah
-                    db "|         L A I N   O S          |",0Dh,0Ah
-                    db "|                                |",0Dh,0Ah
-                    db "|     experimental bootloader    |",0Dh,0Ah
-                    db "|                                |",0Dh,0Ah
-                    db "|    press any key to continue   |",0Dh,0Ah
-                    db "|                                |",0Dh,0Ah
-                    db "+--------------------------------+",0Dh,0Ah,0Dh,0Ah,0
+ascii_screen        db "+----------------------------+",0Dh,0Ah
+                    db "|                            |",0Dh,0Ah
+                    db "|       L A I N   O S        |",0Dh,0Ah
+                    db "|                            |",0Dh,0Ah
+                    db "|   experimental bootloader  |",0Dh,0Ah
+                    db "|                            |",0Dh,0Ah
+                    db "+----------------------------+",0Dh,0Ah,0Dh,0Ah,0
 
 OPTION_COUNT        equ 2
 BOOT_INFO_ADDR      equ 0x9000
@@ -47,7 +45,7 @@ BOOT_FLAGS          equ BOOT_INFO_ADDR+1
 CODE_SEG            equ gdt_code - gdt_start   ; Offset of code segment in GDT
 DATA_SEG            equ gdt_data - gdt_start   ; Offset of data segment in GDT
 KERNEL_LOCATION     equ 0x2000                 ; Load address of kernel
-KERNEL_SECTORS      equ 14                     ; Number of sectors to read
+KERNEL_SECTORS      equ 13                     ; Number of sectors to read
 KERNEL_START_SECTOR equ 4                      ; Start sector on disk
 
 ; ----------------------
