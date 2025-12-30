@@ -1,5 +1,5 @@
 #include "arch/interrupts/isr.h"
-#include "core/print.h"
+#include "core/print_vga_text.h"
 #include "core/panic.h"
 #include "utils/defhelp.h"
 #include "utils/types.h"

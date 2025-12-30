@@ -1,5 +1,5 @@
 #include "arch/interrupts/irq.h"
-#include "core/print.h"
+#include "core/print_vga_text.h"
 #include "drivers/keyboard.h"
 #include "utils/defhelp.h"
 #include "utils/types.h"

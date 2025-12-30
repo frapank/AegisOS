@@ -1,4 +1,4 @@
-#include "core/print.h"
+#include "core/print_vga_text.h"
 
 #include "core/format.h"
 #include "core/memory.h"
