@@ -27,9 +27,9 @@
 */
 
 #include <stddef.h>
-#include "core/print.h"
+#include "core/print_vga_text.h"
 #include "drivers/keyboard.h"
-#include "drivers/vga/vga.h"
+#include "drivers/vga/vga_text.h"
 #include "utils/string.h"
 #include "utils/kshell/kshell_commands.h"
 

@@ -1,6 +1,6 @@
 #include "core/boot_info.h"
 
-#include "core/print.h"
+#include "core/print_vga_text.h"
 
 struct boot_info local_boot_info;
 

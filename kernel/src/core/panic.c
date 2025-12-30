@@ -1,7 +1,7 @@
 #include "core/panic.h"
 
 #include "arch/io.h"
-#include "core/print.h"
+#include "core/print_vga_text.h"
 
 void panick(char* msg)
 {
