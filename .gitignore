@@ -2,6 +2,7 @@
 *.o
 *.out
 *.swap
+config.mk
 
 # Libs
 *.tlb

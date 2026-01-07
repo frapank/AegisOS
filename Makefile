@@ -1,9 +1,5 @@
 # -- Vars --
-ASM 			:= nasm
-CAT 			:= cat
-GCC 			:= i386-elf-gcc
-LD 				:= i386-elf-ld
-OBJCOPY 		:= i386-elf-objcopy
+include config.mk
 
 BUILD_DIR 		:= build
 BOOT_DIR 		:= boot
@@ -11,9 +7,6 @@ SRC_DIR 		:= kernel/src
 INC_DIR 		:= kernel/include
 LINK_FILE 		:= link.ld
 
-GCC_FLAGS 		:= -ffreestanding -m32 -O2 -fno-omit-frame-pointer -g \
-				   -fno-stack-protector -fno-builtin -fno-common -march=i686 \
-				   -mtune=i686 -Wall -Wextra -Wpedantic -std=c17 -pipe 
 ASM_DFLAGS 		:= -g -F dwarf
 INCLUDE_FLAGS 	:= -I$(INC_DIR)
 
@@ -26,7 +19,7 @@ all: boot kernel
 # Files
 $(BUILD_DIR)/%.o: $(SRC_DIR)/%.c
 	mkdir -p $(dir $@)
-	$(GCC) $(GCC_FLAGS) $(INCLUDE_FLAGS) -c $< -o $@
+	$(CC) $(FLAGS) $(INCLUDE_FLAGS) -c $< -o $@
 
 $(BUILD_DIR)/kernel_entry.o: $(BOOT_DIR)/kernel_entry.asm
 	$(ASM) -f elf32 $(ASM_DFLAGS) $< -o $@
