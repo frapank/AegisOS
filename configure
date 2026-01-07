@@ -1,0 +1,115 @@
+#!/bin/bash
+
+## -- var --
+MK=config.mk
+DEBUG=0
+
+# Default tools
+ASM_DEFAULT=nasm
+CAT_DEFAULT=cat
+GCC_DEFAULT=i386-elf-gcc
+LD_DEFAULT=i386-elf-ld
+OBJCOPY_DEFAULT=i386-elf-objcopy
+
+# Tools (can be overridden by user)
+ASM="$ASM_DEFAULT"
+CAT="$CAT_DEFAULT"
+GCC="$GCC_DEFAULT"
+LD="$LD_DEFAULT"
+OBJCOPY="$OBJCOPY_DEFAULT"
+
+GCC_FLAGS="-ffreestanding -m32 -O2 -fno-omit-frame-pointer -g \
+-fno-stack-protector -fno-builtin -fno-common -march=i686 \
+-mtune=i686 -Wall -Wextra -Wpedantic -pipe"
+
+# -- Options --
+while (($#)); do
+    case "$1" in
+        --set-gcc=*)      GCC="${1#--set-gcc=}"; shift ;;
+        --set-ld=*)       LD="${1#--set-ld=}"; shift ;;
+        --set-objcopy=*)  OBJCOPY="${1#--set-objcopy=}"; shift ;;
+        --set-asm=*)      ASM="${1#--set-asm=}"; shift ;;
+        --set-cat=*)      CAT="${1#--set-cat=}"; shift ;;
+        --enable-debug)   DEBUG=1; shift ;;
+        --help|-h)
+            cat <<'EOF'
+Usage: ./setup.sh [options]
+
+Options:
+  --set-gcc=PATH       Use custom GCC compiler (i386-elf-gcc default)
+  --set-ld=PATH        Use custom LD linker (i386-elf-ld default)
+  --set-objcopy=PATH   Use custom OBJCOPY tool (i386-elf-objcopy default)
+  --set-asm=PATH       Use custom ASM assembler (nasm default)
+  --set-cat=PATH       Use custom CAT tool (cat default)
+  --enable-debug       Enable debug flags
+  --help, -h           Show this help message
+EOF
+            exit 0
+            ;;
+        *)
+            echo "Unknown option: $1" >&2
+            exit 1
+            ;;
+    esac
+done
+
+rm -f "$MK"
+
+# -- Helper to check tools --
+check_tool() {
+    local name="$1"
+    local cmd="$2"
+
+    if ! command -v "$cmd" >/dev/null 2>&1; then
+        echo "[-] Required tool '$cmd' not found. Please run tool_make.sh first." >&2
+        rm -f "$MK"
+        exit 1
+    fi
+
+    printf "%s := %s\n" "$name" "$cmd" >> "$MK"
+    echo "[+] $name selected: $cmd"
+}
+
+# Check all required tools
+check_tool "ASM" "$ASM"
+check_tool "CAT" "$CAT"
+check_tool "CC" "$GCC"
+check_tool "LD" "$LD"
+check_tool "OBJCOPY" "$OBJCOPY"
+
+# Create temporary test file
+cat > test.c <<'EOF'
+int main(){}
+EOF
+
+# Check if GCC works
+if ! "$GCC" -ffreestanding -c test.c -o test.o >/dev/null 2>&1; then
+    echo "[-] GCC compiler '$GCC' failed to compile a test program" >&2
+    rm -f test.c "$MK"
+    exit 1
+fi
+
+# Check support for c16
+if "$GCC" -ffreestanding -std=c17 -c test.c -o test.o >/dev/null 2>&1; then
+    GCC_FLAGS="$GCC_FLAGS -std=c17"
+else
+    echo "[-] $GCC doesn't support -std=c17" >&2
+    rm -f test.o test.c "$MK"
+    exit 1
+fi
+
+# Set debug flags
+if [ "$DEBUG" -eq 1 ]; then
+    GCC_FLAGS="$GCC_FLAGS -g -O0 -DDEBUG"
+    echo "[+] Debug flags enabled: -g -O0 -DDEBUG"
+else
+    GCC_FLAGS="$GCC_FLAGS -O2 -DNDEBUG"
+fi
+
+# Write flags
+printf "FLAGS := %s\n" "$GCC_FLAGS" >> "$MK"
+
+# Clean up
+rm -f test.o test.c
+
+echo "[+] config.mk successfully generated"
