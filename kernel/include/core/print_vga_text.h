@@ -1,7 +1,7 @@
 #ifndef PRINT_H
 #define PRINT_H
 
-#include "drivers/vga/vga.h"
+#include "drivers/vga/vga_text.h"
 
 struct line_data {
     int x;

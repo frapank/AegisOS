@@ -12,7 +12,7 @@
 #define OFFSET_MASTER      0x20
 #define OFFSET_SLAVE       0x28
 
-void static pic_remap(void)
+static void pic_remap(void)
 {
     // Save the mask
     u8 mask1 = inb(PIC_MASTER_DATA);

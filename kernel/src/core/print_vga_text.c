@@ -1,4 +1,4 @@
-#include "core/print.h"
+#include "core/print_vga_text.h"
 
 #include "core/format.h"
 #include "core/memory.h"
@@ -143,6 +143,8 @@ void vprint_color(char *msg, enum vga_color text, enum vga_color background,
                     i++;
                     break;
                 }
+
+                break;
 
             default:
                 if (cursor.x >= VGA_WIDTH) {

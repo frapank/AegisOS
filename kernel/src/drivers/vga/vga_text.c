@@ -1,4 +1,4 @@
-#include "drivers/vga/vga.h"
+#include "drivers/vga/vga_text.h"
 #include "arch/io.h"
 
 void vga_update_cursor(u16 x, u16 y) 
