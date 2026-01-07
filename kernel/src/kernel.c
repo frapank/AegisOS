@@ -1,7 +1,7 @@
 #include "arch/interrupts/idt.h"
 #include "arch/io.h"
 #include "arch/pic.h"
-#include "core/print.h"
+#include "core/print_vga_text.h"
 #include "core/boot_info.h"
 #include "core/panic.h"
 #include "utils/kshell/kshell.h"

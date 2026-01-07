@@ -1,10 +1,11 @@
 #include "arch/interrupts/irq.h"
-#include "core/print.h"
+#include "core/print_vga_text.h"
 #include "drivers/keyboard.h"
 #include "utils/defhelp.h"
 #include "utils/types.h"
 
-static void default_irq_handler(struct regs* regs){
+static void default_irq_handler(struct regs* regs)
+{
     (void)regs;
 }
 
@@ -29,6 +30,7 @@ UNDECLARED_IRQ(15);
 
 static void irq1_man(struct regs *r)
 {
+    (void)r;
     keyboard_interrupt_handler();
 }
 

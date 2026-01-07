@@ -1,4 +1,88 @@
-build/
-.cache/
-compile_commands.json
+*.g
+*.o
+*.out
+*.swap
+
+# Libs
+*.tlb
+*.lib
+*.la
+*.a
+*.lo
+
+# Linker 
+*.ilk
+*.exp
+*.map
+
+# Obj files
+*.ko
+*.wasm
+*.ll
+*.obj
+*.elf
+*.o
+*.s
+
+# Pre-compiled headers
+*.pch
+*.gch
+
+# Shared objects
+*.so
+*.dylib
+*.so.*
+
+# Debug
+*.dSYM/
+*.su
+*.pdb
+*.idb
+
+# Executables
+*.app
+*.exe
+*.x86_64
+*.i*86
+*.out
+*.hex
+
+# macOS
+.DS_Store
+
+# git
+*.rej
+*.patch
+*.orig
+
+# Kernel Modules and compiler results
+.tmp_versions/
+*.cmd
+modules.order
+Mkfile.old
+Module.symvers
+*.mod*
+dkms.conf
+/build/
+.idea/
+/resources/grammar.tab.c
+/resources/grammar.vcg
+/resources/lex.yy.c
+/resources/y.tab.c
+/resources/y.tab.h
+/bin/
+
+# VS files
+.vscode/
+.vs/
+out/
+/cmake-build-debug/
+/cmake-build-release/
+
+# tags files
 tags
+TAGS
+
+# Clangd LSP files
+/.cache/
+/compile_commands.json
