@@ -8,9 +8,9 @@ KSHELL=1
 # Default tools
 ASM_DEFAULT=nasm
 CAT_DEFAULT=cat
-GCC_DEFAULT=i386-elf-gcc
-LD_DEFAULT=i386-elf-ld
-OBJCOPY_DEFAULT=i386-elf-objcopy
+GCC_DEFAULT=tools/bin/i386-elf-gcc
+LD_DEFAULT=tools/bin/i386-elf-ld
+OBJCOPY_DEFAULT=tools/bin/i386-elf-objcopy
 VMRAM_DEFAULT=512M
 VMDISK_DEFAULT=1024
 
@@ -72,7 +72,7 @@ check_tool() {
     local cmd="$2"
 
     if ! command -v "$cmd" >/dev/null 2>&1; then
-        echo "[-] Required tool '$cmd' not found. Please run tool_make.sh first." >&2
+        echo "[-] Required tool '$cmd' not found. Please run './make_tools' first." >&2
         rm -f "$MK"
         exit 1
     fi
