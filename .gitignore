@@ -4,6 +4,7 @@
 *.swap
 *.swp
 *.img
+tools/
 config.mk
 
 # Libs

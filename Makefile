@@ -99,10 +99,6 @@ img-run:
 	@./$(RUN_SCRIPT) $(DISK_IMG) $(VMRAM)
 
 # -=== Utils ===-
-tools:
-	@$(MESS) '[$(GREEN)TOOL$(RESET)] %s\n' "Installing in '~/usr/local/i386elfgcc'"
-	@./tool_make.sh
-
 clean:
 	@$(MESS) '[$(RED)CLEAN$(RESET)] %s\n' "Remove 'build/'"
 	@rm -rf $(BUILD_DIR)
