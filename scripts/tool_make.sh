@@ -66,7 +66,7 @@ init() {
     log_info "Installing in: $BIN_PATH"
     log_info "Require root for chown: "
     mkdir -p "$BIN_PATH"
-    run_root chown "$USER":"$USER" "$BIN_PATH"
+    run_root chown "$(id -un)":"$(id -gn)" "$BIN_PATH"
 
     mkdir -p "$TEMP_PATH"
     cd "$TEMP_PATH"
