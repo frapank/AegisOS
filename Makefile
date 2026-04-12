@@ -10,7 +10,7 @@ BOOT_DIR 		:= boot
 KERNEL_DIR		:= kernel
 SRC_DIR 		:= $(KERNEL_DIR)/src
 INC_DIR 		:= $(KERNEL_DIR)/include
-LINK_FILE 		:= link.ld
+LINK_FILE 		:= kernel/kernel_link.ld
 
 ASM_DFLAGS 		:= -g -F dwarf
 INCLUDE_FLAGS 	:= -I$(INC_DIR)
