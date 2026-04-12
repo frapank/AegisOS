@@ -1,6 +1,10 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
 trap 'log_error "Error at line ${LINENO}: ${BASH_COMMAND} (exit code: $?)"' ERR
+EXIT_CODE=0
+INTERRUPTED=0
+trap 'EXIT_CODE=$?; cleanup' EXIT
+trap 'INTERRUPTED=1' INT
 
 ROOT_DIR="$(pwd)"
 BIN_PATH="$ROOT_DIR/tools"
@@ -17,6 +21,27 @@ log() {
 log_info()    { log INFO "$@"; }
 log_success() { log OK "$@"; }
 log_error()   { log ERROR "$@" >&2; }
+
+detect_priv_cmd() {
+    if [[ $EUID -eq 0 ]]; then
+        PRIV_CMD=""
+    elif command -v sudo >/dev/null 2>&1; then
+        PRIV_CMD="sudo"
+    elif command -v doas >/dev/null 2>&1; then
+        PRIV_CMD="doas"
+    else
+        log_error "Neither sudo nor doas found"
+        exit 1
+    fi
+}
+
+run_root() {
+    if [[ -n "${PRIV_CMD:-}" ]]; then
+        $PRIV_CMD bash -c "$*"
+    else
+        "$@"
+    fi
+}
 
 require() {
     if ! command -v "$1" &>/dev/null; then
@@ -41,7 +66,7 @@ init() {
     log_info "Installing in: $BIN_PATH"
     log_info "Require root for chown: "
     mkdir -p "$BIN_PATH"
-    sudo chown "$USER":"$USER" "$BIN_PATH"
+    run_root chown "$(id -un)":"$(id -gn)" "$BIN_PATH"
 
     mkdir -p "$TEMP_PATH"
     cd "$TEMP_PATH"
@@ -99,20 +124,32 @@ build_gcc() {
     log_success "GCC done"
 }
 
-clean() {
-    log_info "Cleaning up temporary files..."
+cleanup() {
+    log_info "Cleaning up with code $EXIT_CODE"
+    if [[ "$INTERRUPTED" -eq 1 ]]; then
+        EXIT_CODE=130
+    fi
+
+    if [ $EXIT_CODE -ne 0 ]; then
+        log_error "Error detected, removing $BIN_PATH..."
+        rm -rf "$BIN_PATH"
+    else
+        log_success "Build completed, keeping $BIN_PATH"
+    fi
+
+    log_info "Cleaning temporary files..."
     rm -rf "$TEMP_PATH"
-    log_success "Cleanup done"
+    log_success "Cleaning done!"
 }
 
 main() {
+    detect_priv_cmd
     require_tools
     init
     get
     build_bin_utils
     prepare
     build_gcc
-    clean
 }
 
 main

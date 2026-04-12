@@ -1,6 +1,10 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
 trap 'log_error "Error at line ${LINENO}: ${BASH_COMMAND} (exit code: $?)"' ERR
+EXIT_CODE=0
+INTERRUPTED=0
+trap 'EXIT_CODE=$?; cleanup' EXIT
+trap 'INTERRUPTED=1' INT
 
 log() {
     local level="$1"
@@ -27,7 +31,7 @@ detect_priv_cmd() {
 
 run_root() {
     if [[ -n "${PRIV_CMD:-}" ]]; then
-        $PRIV_CMD "$@"
+        $PRIV_CMD bash -c "$*"
     else
         "$@"
     fi
@@ -106,11 +110,30 @@ verify_layout() {
     lsblk "$LOOPDEV"
 }
 
-cleanup() {
-    log_info "Cleaning up. Root required:"
+permission_set() {
     chmod 777 "$IMAGE"
-    run_root losetup -d "$LOOPDEV"
-    log_success "Disk image successfully created!"
+}
+
+cleanup() {
+    log_info "Cleaning up with code $EXIT_CODE"
+    if [[ "$INTERRUPTED" -eq 1 ]]; then
+        EXIT_CODE=130
+    fi
+
+    if [ $EXIT_CODE -ne 0 ]; then
+        log_error "Cleaning up files: $IMAGE"
+        rm -f "$IMAGE"
+    fi
+
+    if losetup "$LOOPDEV" &>/dev/null; then
+        log_info "Removing loop device. Root required:"
+        if ! run_root losetup -d "$LOOPDEV"; then
+            log_error "Can't detach loop device"
+        fi
+    else
+        log_info "No loop device detected. Skipping..."
+    fi
+    log_success "Cleaning done!"
 }
 
 main() {
@@ -123,7 +146,7 @@ main() {
     reload_loop
     format_partition
     verify_layout
-    cleanup
+    permission_set
 }
 
 main "$@"
