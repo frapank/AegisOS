@@ -1,34 +1,48 @@
 #!/usr/bin/env bash
-set -euo pipefail
-
-REQUIRED_TOOLS=(
-    dd
-    losetup
-    fdisk
-    mkfs.ext2
-    lsblk
-)
-
-usage() {
-    echo "Usage: $0 <disk.img> <size_mb>"
-    exit 1
-}
+set -Eeuo pipefail
+trap 'log_error "Error at line ${LINENO}: ${BASH_COMMAND} (exit code: $?)"' ERR
 
 log() {
-    echo "[*] $1"
+    local level="$1"
+    shift
+    echo "[$(date '+%F %T')] [$level] $*"
 }
 
-check_sudo() {
-    if [[ $EUID -ne 0 ]]; then
-        echo "This script requires root privileges."
+log_info()    { log INFO "$@"; }
+log_success() { log OK "$@"; }
+log_error()   { log ERROR "$@" >&2; }
+
+detect_priv_cmd() {
+    if [[ $EUID -eq 0 ]]; then
+        PRIV_CMD=""
+    elif command -v sudo >/dev/null 2>&1; then
+        PRIV_CMD="sudo"
+    elif command -v doas >/dev/null 2>&1; then
+        PRIV_CMD="doas"
+    else
+        log_error "Neither sudo nor doas found"
         exit 1
     fi
 }
 
+run_root() {
+    if [[ -n "${PRIV_CMD:-}" ]]; then
+        $PRIV_CMD "$@"
+    else
+        "$@"
+    fi
+}
+
+usage() {
+    log_info "Usage: $0 <disk.img> <size_mb>"
+    exit 1
+}
+
 check_tools() {
+    REQUIRED_TOOLS=(dd losetup fdisk mkfs.ext2 lsblk)
     for tool in "${REQUIRED_TOOLS[@]}"; do
         if ! command -v "$tool" >/dev/null 2>&1; then
-            echo "Error: required tool '$tool' not found"
+            log_error "Required tool '$tool' not found"
             exit 1
         fi
     done
@@ -44,19 +58,19 @@ parse_args() {
 }
 
 create_image() {
-    log "Creating ${SIZE_MB}MB disk image..."
+    log_info "Creating ${SIZE_MB}MB disk image..."
     dd if=/dev/zero of="$IMAGE" bs=1M count="$SIZE_MB" status=none
 }
 
 attach_loop() {
-    log "Attaching loop device..."
-    LOOPDEV=$(losetup -fP --show "$IMAGE")
-    log "Loop device: $LOOPDEV"
+    log_info "Attaching loop device. Root required:"
+    LOOPDEV=$(run_root losetup -fP --show "$IMAGE")
+    log_success "Loop device attached: $LOOPDEV"
 }
 
 partition_disk() {
-    log "Partitioning disk..."
-    fdisk "$LOOPDEV" >/dev/null 2>&1 <<EOF
+    log_info "Partitioning disk. Root required:"
+    run_root fdisk "$LOOPDEV" >/dev/null 2>&1 <<EOF
 o
 n
 p
@@ -70,43 +84,37 @@ p
 
 w
 EOF
+    log_success "Disk partitioned"
 }
 
 reload_loop() {
-    log "Reloading loop device to detect partitions..."
-    losetup -d "$LOOPDEV"
-    LOOPDEV=$(losetup -fP --show "$IMAGE")
-    log "Loop device reattached: $LOOPDEV"
+    log_info "Reloading loop device to detect partitions. Root required:"
+    run_root losetup -d "$LOOPDEV"
+    LOOPDEV=$(run_root losetup -fP --show "$IMAGE")
+    log_info "Loop device reattached: $LOOPDEV"
 }
 
 format_partition() {
     PART2="${LOOPDEV}p2"
-    log "Formatting $PART2 as ext2..."
-    mkfs.ext2 -q "$PART2"
+    log_info "Formatting $PART2 as ext2. Root required:"
+    run_root mkfs.ext2 -q "$PART2"
+    log_success "EXT2 partition created"
 }
 
 verify_layout() {
-    log "Verifying partition layout..."
+    log_info "Verifying partition layout..."
     lsblk "$LOOPDEV"
 }
 
 cleanup() {
+    log_info "Cleaning up. Root required:"
     chmod 777 "$IMAGE"
-    losetup -d "$LOOPDEV"
-
-    echo ""
-    echo "Disk image successfully created!"
-    echo "Image file: $IMAGE"
-    echo "Loop device: $LOOPDEV"
-    echo
-    echo "Partitions:"
-    echo "  ${LOOPDEV}p1  -> reserved (stage2)"
-    echo "  ${LOOPDEV}p2  -> ext2 filesystem"
-    echo ""
+    run_root losetup -d "$LOOPDEV"
+    log_success "Disk image successfully created!"
 }
 
 main() {
-    check_sudo
+    detect_priv_cmd
     parse_args "$@"
     check_tools
     create_image
