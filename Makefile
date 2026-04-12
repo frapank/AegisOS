@@ -91,7 +91,7 @@ img-create:
 
 img-flash:
 	@$(MESS) '[$(YELLOW)FLASH$(RESET)] %s\n' 'Flashing $(DISK_IMG)'
-	./$(FLASH_SCRIPT) $(DISK_IMG) $(BUILD_DIR)/bl_first.bin \
+	@./$(FLASH_SCRIPT) $(DISK_IMG) $(BUILD_DIR)/bl_first.bin \
 		$(BUILD_DIR)/bl_second.bin $(BUILD_DIR)/full_kernel.bin
 
 img-run:
