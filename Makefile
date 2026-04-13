@@ -54,7 +54,7 @@ $(BUILD_DIR)/%.o: $(SRC_DIR)/%.c
 	@$(CC) $(FLAGS) $(INCLUDE_FLAGS) -c $< -o $@
 
 $(BUILD_DIR)/kernel_entry.o: $(SRC_DIR)/kernel_entry.asm
-	@$(MESS) '[$(RED)ASM$(RESET)]  %s\n' "$<"
+	@$(MESS) '[$(RED)ASM$(RESET)] %s\n' "$<"
 	@$(ASM) -f elf32 $(ASM_DFLAGS) $< -o $@
 
 $(BUILD_DIR)/isr_asm.o: $(SRC_DIR)/arch/interrupts/isr.asm
@@ -76,8 +76,9 @@ kernel: $(BUILD_DIR)/kernel_entry.o $(BUILD_DIR)/isr_asm.o $(OBJ_FILES)
 # -=== Boot ===-
 boot:
 	@mkdir -p $(BUILD_DIR)
-	@$(MESS) '[$(RED)ASM$(RESET)] %s\n' '$(BOOT_DIR)/bl_second.asm'
+	@$(MESS) '[$(RED)ASM$(RESET)] %s\n' '$(BOOT_DIR)/bl_first.asm'
 	@$(ASM) -f bin $(BOOT_DIR)/bl_first.asm -o $(BUILD_DIR)/bl_first.bin
+	@$(MESS) '[$(RED)ASM$(RESET)] %s\n' '$(BOOT_DIR)/bl_second.asm'
 	@$(ASM) -f bin $(BOOT_DIR)/bl_second.asm -o $(BUILD_DIR)/bl_second.bin
 
 # -=== VM ===-
