@@ -63,7 +63,7 @@ $(BUILD_DIR)/isr_asm.o: $(SRC_DIR)/arch/interrupts/isr.asm
 
 kernel: $(BUILD_DIR)/kernel_entry.o $(BUILD_DIR)/isr_asm.o $(OBJ_FILES)
 	@$(MESS) '[$(GREEN)LD$(RESET)] %s\n' 'Linking all'
-	@$(LD) -T $(LINK_FILE) \
+	@$(LD) --no-warn-rwx-segments -T $(LINK_FILE) \
 		$(BUILD_DIR)/kernel_entry.o \
 		$(OBJ_FILES) \
 		$(BUILD_DIR)/isr_asm.o \
