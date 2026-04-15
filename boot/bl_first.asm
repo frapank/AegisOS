@@ -23,6 +23,7 @@ dap:
 
 ; Includes
 %include "boot/graphics.asm"
+%include "boot/read_disk.asm"
 
 
 ; Entry
@@ -48,19 +49,15 @@ entry:
     mov si, msg_disk_log
     call print_string
 
-    ; load second stage
+    ; read disk
+    push word [boot_disk]
+    push dap
     call read_disk
+    jc disk_error 
+
+    ; jmp second stage
     call start_second
 
-
-; Setup Protected
-read_disk:
-    lea si, [dap]               ; DS:SI = disk packet 
-    mov ah, 0x42                ; extended read 
-    mov dl, [boot_disk] 
-    int 0x13 
-    jc disk_error 
-    ret
 
 disk_error:
     mov si, msg_disk_error
