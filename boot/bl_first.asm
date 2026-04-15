@@ -1,8 +1,32 @@
 [bits 16]
 org 0x7c00
+jmp entry
+
+; Data
+msg_disk_log            db "[*] Searching second stage...",0Dh,0Ah,0
+msg_disk_error          db "[-] Can't find second stage, stopped" ,0Dh,0Ah,0
+
+boot_disk               db  0
+
+STAGE_LOCATION          equ 0x1000
+STAGE_SECTORS           equ 4
+STAGE_START_LBA         equ 2048
+
+dap:
+    db 0x10                             ; packet size
+    db 0                                ; reserved
+    dw STAGE_SECTORS                    ; number of sectors
+    dw STAGE_LOCATION                   ; offset
+    dw 0x0000                           ; segment
+    dq STAGE_START_LBA                  ; LBA start
+
+
+; Includes
+%include "boot/graphics.asm"
+
 
 ; Entry
-start:
+entry:
     cli
 
     ; set Stack
@@ -28,27 +52,6 @@ start:
     call read_disk
     call start_second
 
-; Data
-msg_disk_log            db "[*] Searching second stage...",0Dh,0Ah,0
-msg_disk_error          db "[-] Can't find second stage, stopped" ,0Dh,0Ah,0
-
-boot_disk               db  0
-
-STAGE_LOCATION          equ 0x1000
-STAGE_SECTORS           equ 4
-STAGE_START_LBA         equ 2048
-
-dap:
-    db 0x10                             ; packet size
-    db 0                                ; reserved
-    dw STAGE_SECTORS                    ; number of sectors
-    dw STAGE_LOCATION                   ; offset
-    dw 0x0000                           ; segment
-    dq STAGE_START_LBA                  ; LBA start
-
-
-; Includes
-%include "boot/graphics.asm"
 
 ; Setup Protected
 read_disk:
@@ -65,7 +68,10 @@ disk_error:
     hlt
     jmp $
 
+
+; Second stage start
 start_second:
     jmp STAGE_LOCATION
+
 
 times 446-($-$$) db 0           ; Fill up to 510 bytes

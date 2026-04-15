@@ -1,28 +1,7 @@
 [bits 16]
 org 0x1000
+jmp entry
 
-; Start
-second_stage:
-    mov dword [BOOT_MODE], 0
-    mov dword [BOOT_KERNEL_START], KERNEL_LOCATION
-    
-    ; boot disk passed by stage1
-    mov dl, [0x7E00]
-    mov byte [boot_disk], dl
-
-    ; print UI
-    call clear_screen
-    mov si, ascii_screen
-    call print_string
-
-    ; print and select options
-    mov si, msg_boot_options
-    call print_string
-    call select_boot_mode
-
-    call load_smap
-
-    call start_protected
 
 ; Data
 ascii_screen            db "+----------------------------+",0Dh,0Ah
@@ -42,7 +21,6 @@ msg_test                db "[*] Test reached!",0Dh,0Ah,0
 
 boot_disk               db 1
 
-; Constants 
 CODE_SEG                equ gdt_code - gdt_start
 DATA_SEG                equ gdt_data - gdt_start
 
@@ -65,11 +43,37 @@ BOOT_KERNEL_START       equ BOOT_INFO_ADDR+4
 BOOT_MEMORY_MAP_COUNT   equ BOOT_INFO_ADDR+8
 BOOT_MAP_ENTRIES        equ BOOT_INFO_ADDR+16
 
+
 ; Includes
 %include "boot/graphics.asm"
 %include "boot/file_system.asm"
 %include "boot/io.asm"
 %include "boot/sys_info.asm"
+
+
+; Entry
+entry:
+    mov dword [BOOT_MODE], 0
+    mov dword [BOOT_KERNEL_START], KERNEL_LOCATION
+    
+    ; boot disk passed by stage1
+    mov dl, [0x7E00]
+    mov byte [boot_disk], dl
+
+    ; print UI
+    call clear_screen
+    mov si, ascii_screen
+    call print_string
+
+    ; print and select options
+    mov si, msg_boot_options
+    call print_string
+    call select_boot_mode
+
+    call load_smap
+
+    call start_protected
+
 
 ; Protected mode setup
 start_protected:
@@ -86,6 +90,7 @@ start_protected:
     mov cr0, eax
 
     jmp CODE_SEG:pm_entry
+
 
 ; Global Descriptor Table
 gdt_start:
@@ -115,6 +120,7 @@ gdt_end:
 gdt_descriptor:
     dw gdt_end - gdt_start - 1  ; size of GDT
     dd gdt_start                ; address of GDT
+
 
 ; Protected mode entry
 [bits 32]
