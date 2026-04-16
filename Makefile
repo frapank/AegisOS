@@ -1,22 +1,16 @@
 # -=== Vars ===-
+ROOT := $(CURDIR)
+export ROOT
 ifeq ("$(wildcard config.mk)","")
 $(error File config.mk not found! Run ./configure to generate it)
 endif
 
 include config.mk
+export ASM CC LD OBJCOPY FLAGS
 
-BUILD_DIR 		:= build
-BOOT_DIR 		:= stand
-KERNEL_DIR		:= sys
-SRC_DIR 		:= $(KERNEL_DIR)
-INC_DIR 		:= $(KERNEL_DIR)/include
-LINK_FILE 		:= $(KERNEL_DIR)/kernel_link.ld
-
-ASM_DFLAGS 		:= -g -F dwarf
-INCLUDE_FLAGS 	:= -I$(INC_DIR)
-
-SRC_FILES 		:= $(shell find $(SRC_DIR) -type f -name "*.c")
-OBJ_FILES 		:= $(SRC_FILES:$(SRC_DIR)/%.c=$(BUILD_DIR)/%.o)
+KERNEL_MAIN_DIR	:= sys
+BL_MAIN_DIR		:= stand
+BUILD_DIR		:= build
 
 DISK_IMG		:= disk.img
 SCRIPTS_DIR		:= scripts
@@ -43,43 +37,18 @@ ifneq ($(TERM),dumb)
     CYAN   := $(shell tput setaf 6)
   endif
 endif
+export MESS RESET RED GREEN YELLOW MAGENTA CYAN
 
 # -=== Compile ===-
 all: boot kernel
 
 # -=== Kernel ===-
-$(BUILD_DIR)/%.o: $(SRC_DIR)/%.c
-	@mkdir -p $(dir $@)
-	@$(MESS) '[$(CYAN)CC$(RESET)] %s\n' "$<"
-	@$(CC) $(FLAGS) $(INCLUDE_FLAGS) -c $< -o $@
-
-$(BUILD_DIR)/kernel_entry.o: $(SRC_DIR)/kernel_entry.asm
-	@$(MESS) '[$(RED)ASM$(RESET)] %s\n' "$<"
-	@$(ASM) -f elf32 $(ASM_DFLAGS) $< -o $@
-
-$(BUILD_DIR)/isr_asm.o: $(SRC_DIR)/arch/interrupts/isr.asm
-	@$(MESS) '[$(RED)ASM$(RESET)] %s\n' "$<"
-	@$(ASM) -f elf32 $(ASM_DFLAGS) $< -o $@
-
-kernel: $(BUILD_DIR)/kernel_entry.o $(BUILD_DIR)/isr_asm.o $(OBJ_FILES)
-	@$(MESS) '[$(GREEN)LD$(RESET)] %s\n' 'Linking all'
-	@$(LD) --no-warn-rwx-segments -T $(LINK_FILE) \
-		$(BUILD_DIR)/kernel_entry.o \
-		$(OBJ_FILES) \
-		$(BUILD_DIR)/isr_asm.o \
-	    -o $(BUILD_DIR)/full_kernel.elf \
-	    -Map=$(BUILD_DIR)/linkmap.txt
-
-	@$(MESS) '[$(MAGENTA)BIN$(RESET)] %s\n' 'Generating full_kernel.bin'
-	@$(OBJCOPY) -O binary build/full_kernel.elf build/full_kernel.bin
+kernel:
+	@$(MAKE) -s -C $(KERNEL_MAIN_DIR)/
 
 # -=== Boot ===-
 boot:
-	@mkdir -p $(BUILD_DIR)
-	@$(MESS) '[$(RED)ASM$(RESET)] %s\n' '$(BOOT_DIR)/bootblock.asm'
-	@$(ASM) -f bin $(BOOT_DIR)/bootblock.asm -o $(BUILD_DIR)/bootblock.bin
-	@$(MESS) '[$(RED)ASM$(RESET)] %s\n' '$(BOOT_DIR)/loader.asm'
-	@$(ASM) -f bin $(BOOT_DIR)/loader.asm -o $(BUILD_DIR)/loader.bin
+	@$(MAKE) -s -C $(BL_MAIN_DIR)/
 
 # -=== VM ===-
 img-clean:
