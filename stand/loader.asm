@@ -12,9 +12,9 @@ boot_disk               db 1
 CODE_SEG                equ gdt_code - gdt_start
 DATA_SEG                equ gdt_data - gdt_start
 
-BOOTENV_LOCATION         equ 0x2000
-BOOTENV_SECTORS          equ 18
-BOOTENV_START_LBA        equ 4
+BOOTENV_LOCATION   equ 0x2000
+BOOTENV_SECTORS    equ 16
+BOOTENV_START_LBA  equ 8192
 
 CR0_PE                  equ 1
 
@@ -116,4 +116,4 @@ pm_entry:
 
     jmp BOOTENV_LOCATION
 
-times 2048 - ($ - $$) db 0
+times 8192 - ($ - $$) db 0
