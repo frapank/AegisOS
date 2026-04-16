@@ -38,7 +38,7 @@ run_root() {
 }
 
 usage() {
-    log_info "Usage: $0 <disk.img> <stage1.bin> <stage2.bin> <kernel>"
+    log_info "Usage: $0 <disk.img> <stage1.bin> <stage2.bin> <stage3.bin> <kernel>"
     exit 1
 }
 
@@ -54,17 +54,20 @@ check_files() {
     IMAGE="$1"
     STAGE1="$2"
     STAGE2="$3"
-    KERNEL="$4"
+    STAGE3="$4"
+    KERNEL="$5"
 
     [[ -f "$IMAGE"  ]] || error_exit "Disk image '$IMAGE' not found."
     [[ -f "$STAGE1" ]] || error_exit "Stage1 binary '$STAGE1' not found."
     [[ -f "$STAGE2" ]] || error_exit "Stage2 binary '$STAGE2' not found."
+    [[ -f "$STAGE3" ]] || error_exit "Stage3 binary '$STAGE3' not found."
     [[ -f "$KERNEL" ]] || error_exit "Kernel binary '$KERNEL' not found."
 }
 
 prepare_disk() {
     dd if="$STAGE1" of="$IMAGE" bs=446 count=1 conv=notrunc status=none
     dd if="$STAGE2" of="$IMAGE" bs=512 seek=2048 conv=notrunc status=none
+    dd if="$STAGE3" of="$IMAGE" bs=512 seek=8192 conv=notrunc status=none
     log_success "Stages loaded"
 }
 
@@ -93,16 +96,17 @@ main() {
     detect_priv_cmd
     check_tools
 
-    if [[ $# -ne 4 ]]; then
+    if [[ $# -ne 5 ]]; then
         usage
     fi
 
     IMAGE="$1"
     STAGE1="$2"
     STAGE2="$3"
-    KERNEL="$4"
+    STAGE3="$4"
+    KERNEL="$5"
 
-    check_files "$IMAGE" "$STAGE1" "$STAGE2" "$KERNEL"
+    check_files "$IMAGE" "$STAGE1" "$STAGE2" "$STAGE3" "$KERNEL"
     prepare_disk
     setup_loop_device
     mount_and_copy_kernel
