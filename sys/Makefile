@@ -2,7 +2,8 @@ BUILD_DIR		:= ../build
 KERNEL_DIR		:= ./
 SRC_DIR 		:= $(KERNEL_DIR)
 INC_DIR 		:= $(KERNEL_DIR)/include
-LINK_FILE 		:= $(KERNEL_DIR)/kernel_link.ld
+LINK			:= kernel_link.ld
+LINK_FILE 		:= $(KERNEL_DIR)/$(LINK)
 
 ASM_DFLAGS 		:= -g -F dwarf
 INCLUDE_FLAGS 	:= -I$(INC_DIR)
@@ -30,13 +31,13 @@ $(BUILD_DIR)/isr_asm.o: $(SRC_DIR)/arch/interrupts/isr.asm
 
 kernel: $(BUILD_DIR)/kernel_entry.o $(BUILD_DIR)/isr_asm.o $(OBJ_FILES)
 	@mkdir -p $(dir $@)
-	@$(MESS) '[$(GREEN)LD$(RESET)] %s\n' 'Linking all'
+	@$(MESS) '[$(GREEN)LD$(RESET)] %s\n' 'Linking kernel with $(LINK)'
 	@$(LD) --no-warn-rwx-segments -T $(LINK_FILE) \
 		$(BUILD_DIR)/kernel_entry.o \
 		$(OBJ_FILES) \
 		$(BUILD_DIR)/isr_asm.o \
 	    -o $(BUILD_DIR)/full_kernel.elf \
-	    -Map=$(BUILD_DIR)/linkmap.txt
+	    -Map=$(BUILD_DIR)/kernel_linkmap.txt
 
 	@$(MESS) '[$(MAGENTA)BIN$(RESET)] %s\n' 'Generating full_kernel.bin'
 	@$(OBJCOPY) -O binary $(BUILD_DIR)/full_kernel.elf $(BUILD_DIR)/full_kernel.bin
