@@ -6,11 +6,11 @@ endif
 include config.mk
 
 BUILD_DIR 		:= build
-BOOT_DIR 		:= boot
-KERNEL_DIR		:= kernel
-SRC_DIR 		:= $(KERNEL_DIR)/src
+BOOT_DIR 		:= stand
+KERNEL_DIR		:= sys
+SRC_DIR 		:= $(KERNEL_DIR)
 INC_DIR 		:= $(KERNEL_DIR)/include
-LINK_FILE 		:= kernel/kernel_link.ld
+LINK_FILE 		:= $(KERNEL_DIR)/kernel_link.ld
 
 ASM_DFLAGS 		:= -g -F dwarf
 INCLUDE_FLAGS 	:= -I$(INC_DIR)
@@ -76,10 +76,10 @@ kernel: $(BUILD_DIR)/kernel_entry.o $(BUILD_DIR)/isr_asm.o $(OBJ_FILES)
 # -=== Boot ===-
 boot:
 	@mkdir -p $(BUILD_DIR)
-	@$(MESS) '[$(RED)ASM$(RESET)] %s\n' '$(BOOT_DIR)/bl_first.asm'
-	@$(ASM) -f bin $(BOOT_DIR)/bl_first.asm -o $(BUILD_DIR)/bl_first.bin
-	@$(MESS) '[$(RED)ASM$(RESET)] %s\n' '$(BOOT_DIR)/bl_second.asm'
-	@$(ASM) -f bin $(BOOT_DIR)/bl_second.asm -o $(BUILD_DIR)/bl_second.bin
+	@$(MESS) '[$(RED)ASM$(RESET)] %s\n' '$(BOOT_DIR)/bootblock.asm'
+	@$(ASM) -f bin $(BOOT_DIR)/bootblock.asm -o $(BUILD_DIR)/bootblock.bin
+	@$(MESS) '[$(RED)ASM$(RESET)] %s\n' '$(BOOT_DIR)/loader.asm'
+	@$(ASM) -f bin $(BOOT_DIR)/loader.asm -o $(BUILD_DIR)/loader.bin
 
 # -=== VM ===-
 img-clean:
@@ -92,8 +92,8 @@ img-create:
 
 img-flash:
 	@$(MESS) '[$(YELLOW)FLASH$(RESET)] %s\n' 'Flashing $(DISK_IMG)'
-	@./$(FLASH_SCRIPT) $(DISK_IMG) $(BUILD_DIR)/bl_first.bin \
-		$(BUILD_DIR)/bl_second.bin $(BUILD_DIR)/full_kernel.bin
+	@./$(FLASH_SCRIPT) $(DISK_IMG) $(BUILD_DIR)/bootblock.bin \
+		$(BUILD_DIR)/loader.bin $(BUILD_DIR)/full_kernel.bin
 
 img-run:
 	@$(MESS) '[$(YELLOW)QEMU$(RESET)] %s\n' 'Starting VM'

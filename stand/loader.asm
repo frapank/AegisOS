@@ -45,10 +45,10 @@ BOOT_MAP_ENTRIES        equ BOOT_INFO_ADDR+16
 
 
 ; Includes
-%include "boot/graphics.asm"
-%include "boot/file_system.asm"
-%include "boot/io.asm"
-%include "boot/sys_info.asm"
+%include "stand/bint/graphics.asm"
+%include "stand/bint/file_system.asm"
+%include "stand/bint/io.asm"
+%include "stand/bint/sys_info.asm"
 
 
 ; Entry
