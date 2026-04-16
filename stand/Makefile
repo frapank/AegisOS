@@ -22,5 +22,6 @@ boot:
 		$(BUILD_DIR)/bootenv_entry.o \
 	    -o $(BUILD_DIR)/bootenv.elf \
 	    -Map=$(BUILD_DIR)/bootenv_linkmap.txt
+	@$(OBJCOPY) -O binary $(BUILD_DIR)/bootenv.elf $(BUILD_DIR)/bootenv.bin
 
 .PHONY: boot
