@@ -3,7 +3,7 @@ org 0x7c00
 jmp entry
 
 ; Data
-msg_disk_log            db "[*] Searching second stage...",0Dh,0Ah,0
+msg_disk_log            db "[*] Searching second loader...",0Dh,0Ah,0
 msg_disk_error          db "[-] Can't find second stage, stopped" ,0Dh,0Ah,0
 
 boot_disk               db  0

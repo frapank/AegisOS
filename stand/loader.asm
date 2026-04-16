@@ -4,75 +4,55 @@ jmp entry
 
 
 ; Data
-ascii_screen            db "+----------------------------+",0Dh,0Ah
-                        db "|                            |",0Dh,0Ah
-                        db "|       L A I N   O S        |",0Dh,0Ah
-                        db "|                            |",0Dh,0Ah
-                        db "|   experimental bootloader  |",0Dh,0Ah
-                        db "|                            |",0Dh,0Ah
-                        db "+----------------------------+",0Dh,0Ah,0Dh,0Ah,0
-msg_boot_options        db "Press a number to select an option:",0Dh,0Ah
-                        db "[1] Normal mode",0Dh,0Ah
-                        db "[2] Debug mode",0Dh,0Ah,0
-
-msg_disk_error          db "[-] Error while reading the disk",0Dh,0Ah,0
-msg_smem_error          db "[-] Can't get the memory map",0Dh,0Ah,0
-msg_test                db "[*] Test reached!",0Dh,0Ah,0
+msg_disk_log            db "[*] Searching second bootenv...",0Dh,0Ah,0
+msg_disk_error          db "[-] Can't find second bootenv, stopped" ,0Dh,0Ah,0
 
 boot_disk               db 1
 
 CODE_SEG                equ gdt_code - gdt_start
 DATA_SEG                equ gdt_data - gdt_start
 
-KERNEL_LOCATION         equ 0x2000
-KERNEL_SECTORS          equ 18
-KERNEL_START_SECTOR     equ 4
+BOOTENV_LOCATION         equ 0x2000
+BOOTENV_SECTORS          equ 18
+BOOTENV_START_LBA        equ 4
 
-OPTION_COUNT            equ 2
 CR0_PE                  equ 1
 
-; Boot Info Layout (0x9000):
-;  +0  : BOOT_MODE (dword)
-;  +4  : BOOT_KERNEL_START (dword)
-;  +8  : BOOT_MEMORY_MAP_COUNT (dword)
-;  +12 : padding
-;  +16 : BOOT_MAP_ENTRIES
-BOOT_INFO_ADDR          equ 0x9000
-BOOT_MODE               equ BOOT_INFO_ADDR+0
-BOOT_KERNEL_START       equ BOOT_INFO_ADDR+4
-BOOT_MEMORY_MAP_COUNT   equ BOOT_INFO_ADDR+8
-BOOT_MAP_ENTRIES        equ BOOT_INFO_ADDR+16
+dap:
+    db 0x10                             ; packet size
+    db 0                                ; reserved
+    dw BOOTENV_SECTORS                  ; number of sectors
+    dw BOOTENV_LOCATION                 ; offset
+    dw 0x0000                           ; segment
+    dq BOOTENV_START_LBA                ; LBA start
 
 
 ; Includes
 %include "bint/graphics.asm"
-%include "bint/file_system.asm"
-%include "bint/io.asm"
-%include "bint/sys_info.asm"
+%include "bint/read_disk.asm"
 
 
 ; Entry
 entry:
-    mov dword [BOOT_MODE], 0
-    mov dword [BOOT_KERNEL_START], KERNEL_LOCATION
-    
     ; boot disk passed by stage1
     mov dl, [0x7E00]
     mov byte [boot_disk], dl
 
     ; print UI
-    call clear_screen
-    mov si, ascii_screen
+    mov si, msg_disk_log
     call print_string
 
-    ; print and select options
-    mov si, msg_boot_options
-    call print_string
-    call select_boot_mode
-
-    call load_smap
-
+    push word [boot_disk]
+    push dap
+    call read_disk
+    jc disk_error 
     call start_protected
+
+disk_error:
+    mov si, msg_disk_error
+    call print_string
+    hlt
+    jmp $
 
 
 ; Protected mode setup
@@ -134,8 +114,6 @@ pm_entry:
 
     mov esp, 0x90000        ; setup stack base
 
-    mov eax, 0x1BADB002     ; magic number
-    mov ebx, BOOT_INFO_ADDR ; boot_info pointer (kernel args)
-    jmp KERNEL_LOCATION
+    jmp BOOTENV_LOCATION
 
 times 2048 - ($ - $$) db 0
