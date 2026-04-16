@@ -62,7 +62,7 @@ img-create:
 img-flash:
 	@$(MESS) '[$(YELLOW)FLASH$(RESET)] %s\n' 'Flashing $(DISK_IMG)'
 	@./$(FLASH_SCRIPT) $(DISK_IMG) $(BUILD_DIR)/bootblock.bin \
-		$(BUILD_DIR)/loader.bin $(BUILD_DIR)/full_kernel.bin
+		$(BUILD_DIR)/loader.bin $(BUILD_DIR)/bootenv.bin $(BUILD_DIR)/full_kernel.bin
 
 img-run:
 	@$(MESS) '[$(YELLOW)QEMU$(RESET)] %s\n' 'Starting VM'
