@@ -75,14 +75,22 @@ parse_args() {
 check_tool() {
     local name="$1"
     local cmd="$2"
-    
+
     if ! command -v "$cmd" >/dev/null 2>&1; then
         log_error "Required tool '$cmd' not found. Please run './make_tools' first." >&2
         rm -f "$MK"
         exit 1
     fi
 
-    printf "%s := %s\n" "$name" "$cmd" >> "$MK"
+    case "$name" in
+        CC|LD|OBJCOPY)
+            printf "%s := \$(ROOT)/%s\n" "$name" "$cmd" >> "$MK"
+            ;;
+        *)
+            printf "%s := %s\n" "$name" "$cmd" >> "$MK"
+            ;;
+    esac
+
     log_success "$name selected: $cmd"
 }
 
