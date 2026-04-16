@@ -22,8 +22,8 @@ dap:
 
 
 ; Includes
-%include "stand/bint/graphics.asm"
-%include "stand/bint/read_disk.asm"
+%include "bint/graphics.asm"
+%include "bint/read_disk.asm"
 
 
 ; Entry
