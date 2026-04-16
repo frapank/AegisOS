@@ -18,8 +18,8 @@ boot:
 	@$(ASM) -f elf32 $(ASM_DFLAGS) $(BOOTENV_DIR)/bootenv_entry.asm -o $(BUILD_DIR)/bootenv_entry.o
 	@$(MESS) '[$(GREEN)LD$(RESET)] %s\n' 'Linking bootenv with $(LINK)'
 	@$(LD) --no-warn-rwx-segments -T $(LINK_FILE) \
-		$(BUILD_DIR)/bootenv.o \
 		$(BUILD_DIR)/bootenv_entry.o \
+		$(BUILD_DIR)/bootenv.o \
 	    -o $(BUILD_DIR)/bootenv.elf \
 	    -Map=$(BUILD_DIR)/bootenv_linkmap.txt
 	@$(OBJCOPY) -O binary $(BUILD_DIR)/bootenv.elf $(BUILD_DIR)/bootenv.bin
