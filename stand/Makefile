@@ -1,8 +1,10 @@
-all: boot
-
+# Vars
 BOOTENV_DIR 	:= $(STAND_DIR)/bootenv
 LINK			:= bootenv_link.ld
 LINK_FILE		:= $(BOOTENV_DIR)/$(LINK)
+
+# Build
+all: boot
 
 boot:
 	@mkdir -p $(BUILD_DIR)
