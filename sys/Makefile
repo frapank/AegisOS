@@ -1,14 +1,12 @@
-BUILD_DIR		:= ../build
-KERNEL_DIR		:= ./
-SRC_DIR 		:= $(KERNEL_DIR)
-INC_DIR 		:= $(KERNEL_DIR)/include
+SRC_DIR 		:= $(SYS_DIR)
+INC_DIR 		:= $(SYS_DIR)/include
 LINK			:= kernel_link.ld
-LINK_FILE 		:= $(KERNEL_DIR)/$(LINK)
+LINK_FILE 		:= $(SYS_DIR)/$(LINK)
 
 ASM_DFLAGS 		:= -g -F dwarf
 INCLUDE_FLAGS 	:= -I$(INC_DIR)
 
-SRC_FILES 		:= $(shell find $(SRC_DIR) -type f -name "*.c")
+SRC_FILES 		:= $(shell find $(SRC_DIR) -type f -name "*.c" | sed "s|^$(SRC_DIR)/||")
 OBJ_FILES 		:= $(patsubst %.c,$(BUILD_DIR)/%.o,$(SRC_FILES))
 
 # -=== Kernel ===-

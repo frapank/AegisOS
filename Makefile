@@ -8,9 +8,10 @@ endif
 include config.mk
 export ASM CC LD OBJCOPY FLAGS
 
-KERNEL_MAIN_DIR	:= sys
-BL_MAIN_DIR		:= stand
-BUILD_DIR		:= build
+SYS_DIR			:= $(ROOT)/sys
+STAND_DIR		:= $(ROOT)/stand
+BUILD_DIR		:= $(ROOT)/build
+export SYS_DIR STAND_DIR BUILD_DIR
 
 DISK_IMG		:= disk.img
 SCRIPTS_DIR		:= scripts
@@ -44,11 +45,11 @@ all: boot kernel
 
 # -=== Kernel ===-
 kernel:
-	@$(MAKE) -s -C $(KERNEL_MAIN_DIR)/
+	@$(MAKE) -s -C $(SYS_DIR)/
 
 # -=== Boot ===-
 boot:
-	@$(MAKE) -s -C $(BL_MAIN_DIR)/
+	@$(MAKE) -s -C $(STAND_DIR)/
 
 # -=== VM ===-
 img-clean:
