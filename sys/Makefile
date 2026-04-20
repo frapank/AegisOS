@@ -1,3 +1,4 @@
+# Vars
 SRC_DIR 		:= $(SYS_DIR)
 INC_DIR 		:= $(SYS_DIR)/include
 LINK			:= kernel_link.ld
@@ -9,7 +10,7 @@ INCLUDE_FLAGS 	:= -I$(INC_DIR)
 SRC_FILES 		:= $(shell find $(SRC_DIR) -type f -name "*.c" | sed "s|^$(SRC_DIR)/||")
 OBJ_FILES 		:= $(patsubst %.c,$(BUILD_DIR)/%.o,$(SRC_FILES))
 
-# -=== Kernel ===-
+# Kernel
 all: kernel
 
 $(BUILD_DIR)/%.o: $(SRC_DIR)/%.c

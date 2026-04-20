@@ -1,4 +1,4 @@
-# -=== Vars ===-
+# Include vars
 ROOT := $(CURDIR)
 export ROOT
 ifeq ("$(wildcard config.mk)","")
@@ -8,6 +8,7 @@ endif
 include config.mk
 export ASM CC LD OBJCOPY FLAGS
 
+# Vars
 SYS_DIR			:= $(ROOT)/sys
 STAND_DIR		:= $(ROOT)/stand
 BUILD_DIR		:= $(ROOT)/build
@@ -19,7 +20,7 @@ MAKE_IMG_SCRIPT	:= $(SCRIPTS_DIR)/img_maker.sh
 RUN_SCRIPT		:= $(SCRIPTS_DIR)/img_run.sh
 FLASH_SCRIPT	:= $(SCRIPTS_DIR)/img_flash.sh
 
-# -=== MSG ===-
+# MSG
 MESS			:= printf
 RESET       	:= \033[0m
 RED         	:= \033[31m
@@ -40,18 +41,18 @@ ifneq ($(TERM),dumb)
 endif
 export MESS RESET RED GREEN YELLOW MAGENTA CYAN
 
-# -=== Compile ===-
+# Compile
 all: boot kernel
 
-# -=== Kernel ===-
+# Kernel
 kernel:
 	@$(MAKE) -s -C $(SYS_DIR)/
 
-# -=== Boot ===-
+# Boot
 boot:
 	@$(MAKE) -s -C $(STAND_DIR)/
 
-# -=== VM ===-
+# VM
 img-clean:
 	@$(MESS) '[$(RED)CLEAN$(RESET)] %s\n' 'Removing $(DISK_IMG)'
 	@rm -f $(DISK_IMG)
@@ -69,10 +70,10 @@ img-run:
 	@$(MESS) '[$(YELLOW)QEMU$(RESET)] %s\n' 'Starting VM'
 	@./$(RUN_SCRIPT) $(DISK_IMG) $(VMRAM)
 
-# -=== Utils ===-
+# Utils
 clean:
 	@$(MESS) '[$(RED)CLEAN$(RESET)] %s\n' "Remove 'build/'"
 	@rm -rf $(BUILD_DIR)
 
-# -=== PHONY ===-
+# PHONY
 .PHONY: clean tools img-run img-flash img-create img-clean kernel boot all
