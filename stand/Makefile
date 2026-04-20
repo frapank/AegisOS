@@ -1,7 +1,6 @@
 all: boot
 
-BUILD_DIR 		:= ../build
-BOOTENV_DIR 	:= bootenv
+BOOTENV_DIR 	:= $(STAND_DIR)/bootenv
 LINK			:= bootenv_link.ld
 LINK_FILE		:= $(BOOTENV_DIR)/$(LINK)
 
