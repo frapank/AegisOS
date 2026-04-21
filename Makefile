@@ -12,7 +12,9 @@ export ASM CC LD OBJCOPY FLAGS
 SYS_DIR			:= $(ROOT)/sys
 STAND_DIR		:= $(ROOT)/stand
 BUILD_DIR		:= $(ROOT)/build
-export SYS_DIR STAND_DIR BUILD_DIR
+STAND_BUILD_DIR := $(BUILD_DIR)/stand
+SYS_BUILD_DIR 	:= $(BUILD_DIR)/sys
+export SYS_DIR STAND_DIR BUILD_DIR STAND_BUILD_DIR SYS_BUILD_DIR
 
 DISK_IMG		:= disk.img
 SCRIPTS_DIR		:= scripts
@@ -63,8 +65,8 @@ img-create:
 
 img-flash:
 	@$(MESS) '[$(YELLOW)FLASH$(RESET)] %s\n' 'Flashing $(DISK_IMG)'
-	@./$(FLASH_SCRIPT) $(DISK_IMG) $(BUILD_DIR)/bootblock.bin \
-		$(BUILD_DIR)/loader.bin $(BUILD_DIR)/bootenv.bin $(BUILD_DIR)/full_kernel.bin
+	@./$(FLASH_SCRIPT) $(DISK_IMG) $(STAND_BUILD_DIR)/bootblock.bin \
+		$(STAND_BUILD_DIR)/loader.bin $(STAND_BUILD_DIR)/bootenv.bin $(SYS_BUILD_DIR)/full_kernel.bin
 
 img-run:
 	@$(MESS) '[$(YELLOW)QEMU$(RESET)] %s\n' 'Starting VM'
