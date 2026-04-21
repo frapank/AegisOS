@@ -2,27 +2,43 @@
 BOOTENV_DIR 	:= $(STAND_DIR)/bootenv
 LINK			:= bootenv_link.ld
 LINK_FILE		:= $(BOOTENV_DIR)/$(LINK)
+ASM_DFLAGS 		:= -g -F dwarf
+BOOTENV_INC		:= $(BOOTENV_DIR)/include
+INCLUDE_FLAGS 	:= -I$(BOOTENV_INC)
+
+BOOTENV_SRC		:= $(shell find $(BOOTENV_DIR) -type f -name "*.c")
+BOOTENV_OBJ 	:= $(patsubst $(BOOTENV_DIR)/%.c,$(BUILD_DIR)/%.o,$(BOOTENV_SRC))
 
 # Build
 all: boot
 
-boot:
-	@mkdir -p $(BUILD_DIR)
-	@$(MESS) '[$(RED)ASM$(RESET)] %s\n' 'bootblock.asm'
-	@$(ASM) -f bin bootblock.asm -o $(BUILD_DIR)/bootblock.bin
-	@$(MESS) '[$(RED)ASM$(RESET)] %s\n' 'loader.asm'
-	@$(ASM) -f bin loader.asm -o $(BUILD_DIR)/loader.bin
+$(BUILD_DIR)/%.o: $(BOOTENV_DIR)/%.c
+	@mkdir -p $(dir $@)
+	@$(MESS) '[$(CYAN)CC$(RESET)] %s\n' "$<"
+	@$(CC) $(FLAGS) $(INCLUDE_FLAGS) -c $< -o $@
 
-	@$(MESS) '[$(CYAN)CC$(RESET)] %s\n' "bootenv.c"
-	@$(CC) $(FLAGS) $(INCLUDE_FLAGS) -c $(BOOTENV_DIR)/bootenv.c -o $(BUILD_DIR)/bootenv.o
-	@$(MESS) '[$(RED)ASM$(RESET)] %s\n' 'bootenv_entry.asm'
-	@$(ASM) -f elf32 $(ASM_DFLAGS) $(BOOTENV_DIR)/bootenv_entry.asm -o $(BUILD_DIR)/bootenv_entry.o
+$(BUILD_DIR)/bootblock.bin: $(STAND_DIR)/bootblock.asm
+	@mkdir -p $(dir $@)
+	@$(MESS) '[$(RED)ASM$(RESET)] %s\n' "$<"
+	@$(ASM) -f bin $< -o $@
+
+$(BUILD_DIR)/loader.bin: $(STAND_DIR)/loader.asm
+	@mkdir -p $(dir $@)
+	@$(MESS) '[$(RED)ASM$(RESET)] %s\n' "$<"
+	@$(ASM) -f bin $< -o $@
+
+$(BUILD_DIR)/bootenv_entry.o: $(BOOTENV_DIR)/bootenv_entry.asm
+	@mkdir -p $(dir $@)
+	@$(MESS) '[$(RED)ASM$(RESET)] %s\n' "$<"
+	@$(ASM) -f elf32 $(ASM_DFLAGS) $< -o $@
+
+boot: $(BOOTENV_OBJ) $(BUILD_DIR)/bootblock.bin $(BUILD_DIR)/loader.bin $(BUILD_DIR)/bootenv_entry.o
 	@$(MESS) '[$(GREEN)LD$(RESET)] %s\n' 'Linking bootenv with $(LINK)'
-	@$(LD) --no-warn-rwx-segments -T $(LINK_FILE) \
+	$(LD) --no-warn-rwx-segments -T $(LINK_FILE) \
 		$(BUILD_DIR)/bootenv_entry.o \
-		$(BUILD_DIR)/bootenv.o \
-	    -o $(BUILD_DIR)/bootenv.elf \
-	    -Map=$(BUILD_DIR)/bootenv_linkmap.txt
+		$(BOOTENV_OBJ) \
+		-o $(BUILD_DIR)/bootenv.elf \
+		-Map=$(BUILD_DIR)/bootenv_linkmap.txt
 	@$(OBJCOPY) -O binary $(BUILD_DIR)/bootenv.elf $(BUILD_DIR)/bootenv.bin
 
 .PHONY: boot
