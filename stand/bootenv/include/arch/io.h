@@ -2,7 +2,6 @@
 #define BUS_H
 
 #include "utils/types.h"
-#include <stdint.h>
 
 /* in */
 static inline u8 inb(u16 port) 
