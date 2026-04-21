@@ -48,11 +48,11 @@ all: stand sys
 
 # Sys
 sys:
-	@$(MAKE) -s -C $(SYS_DIR)/
+	@$(MAKE) -C $(SYS_DIR)/
 
 # Stand
 stand:
-	@$(MAKE) -s -C $(STAND_DIR)/
+	@$(MAKE) -C $(STAND_DIR)/
 
 # VM
 img-clean:
