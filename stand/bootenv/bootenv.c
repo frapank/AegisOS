@@ -1,7 +1,7 @@
+#include "drivers/vga_text.h"
+
 void bootenv_entry(void)
 {
-    volatile unsigned short* vga = (unsigned short*)0xB8000;
-
-    vga[0] = (0x3F << 8) | 'H';
-    vga[1] = (0x3F << 8) | 'i';
+    vga_put_char('H', VGA_COLOR_BLACK, VGA_COLOR_RED, 1, 1);
+    vga_put_char('i', VGA_COLOR_BLACK, VGA_COLOR_RED, 2, 1);
 }
