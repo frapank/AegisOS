@@ -46,7 +46,6 @@ export MESS RESET RED GREEN YELLOW MAGENTA CYAN
 # Compile
 all: stand sys
 
-
 # Sys
 sys:
 	@$(MAKE) -s -C $(SYS_DIR)/
@@ -87,4 +86,4 @@ clean-sys:
 	@rm -rf $(SYS_BUILD_DIR)
 
 # PHONY
-.PHONY: clean tools img-run img-flash img-create img-clean sys stand all
+.PHONY: all sys stand img-clean img-create img-flash img-run clean clean-stand clean-sys
