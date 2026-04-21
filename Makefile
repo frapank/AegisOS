@@ -44,14 +44,15 @@ endif
 export MESS RESET RED GREEN YELLOW MAGENTA CYAN
 
 # Compile
-all: boot kernel
+all: stand sys
 
-# Kernel
-kernel:
+
+# Sys
+sys:
 	@$(MAKE) -s -C $(SYS_DIR)/
 
-# Boot
-boot:
+# Stand
+stand:
 	@$(MAKE) -s -C $(STAND_DIR)/
 
 # VM
@@ -77,5 +78,13 @@ clean:
 	@$(MESS) '[$(RED)CLEAN$(RESET)] %s\n' "Remove 'build/'"
 	@rm -rf $(BUILD_DIR)
 
+clean-stand:
+	@$(MESS) '[$(RED)CLEAN$(RESET)] %s\n' "Remove 'build/stand/'"
+	@rm -rf $(STAND_BUILD_DIR)
+
+clean-sys:
+	@$(MESS) '[$(RED)CLEAN$(RESET)] %s\n' "Remove 'build/sys/'"
+	@rm -rf $(SYS_BUILD_DIR)
+
 # PHONY
-.PHONY: clean tools img-run img-flash img-create img-clean kernel boot all
+.PHONY: clean tools img-run img-flash img-create img-clean sys stand all
