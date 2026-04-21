@@ -32,10 +32,16 @@ $(STAND_BUILD_DIR)/bootenv_entry.o: $(BOOTENV_DIR)/bootenv_entry.asm
 	@$(MESS) '[$(RED)ASM$(RESET)] %s\n' "$<"
 	@$(ASM) -f elf32 $(ASM_DFLAGS) $< -o $@
 
-boot: $(BOOTENV_OBJ) $(STAND_BUILD_DIR)/bootblock.bin $(STAND_BUILD_DIR)/loader.bin $(STAND_BUILD_DIR)/bootenv_entry.o
+$(STAND_BUILD_DIR)/arch/interrupts/isr_asm.o: $(STAND_DIR)/bootenv/arch/interrupts/isr.asm
+	@mkdir -p $(dir $@)
+	@$(MESS) '[$(RED)ASM$(RESET)] %s\n' "$<"
+	@$(ASM) -f elf32 $(ASM_DFLAGS) $< -o $@
+
+boot: $(BOOTENV_OBJ) $(STAND_BUILD_DIR)/bootblock.bin $(STAND_BUILD_DIR)/loader.bin $(STAND_BUILD_DIR)/bootenv_entry.o $(STAND_BUILD_DIR)/arch/interrupts/isr_asm.o
 	@$(MESS) '[$(GREEN)LD$(RESET)] %s\n' 'Linking bootenv with $(LINK)'
 	@$(LD) --no-warn-rwx-segments -T $(LINK_FILE) \
 		$(STAND_BUILD_DIR)/bootenv_entry.o \
+		$(STAND_BUILD_DIR)/arch/interrupts/isr_asm.o \
 		$(BOOTENV_OBJ) \
 		-o $(STAND_BUILD_DIR)/bootenv.elf \
 		-Map=$(STAND_BUILD_DIR)/bootenv_linkmap.txt
