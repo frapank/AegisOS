@@ -32,7 +32,7 @@ size_t kstrncpy(c8* dest, const c8* src, size_t n)
     return src_len;
 }
 
-size_t strlen_t(const c8* ch)
+size_t kstrlen(const c8* ch)
 {
     size_t i = 0;
     while (ch[i] != 0)
@@ -42,9 +42,9 @@ size_t strlen_t(const c8* ch)
 
 s32 kstreql(const c8* ch1, const c8* ch2)
 {
-    size_t size = strlen_t(ch1);
+    size_t size = kstrlen(ch1);
 
-    if (size != strlen_t(ch2)) return 0;
+    if (size != kstrlen(ch2)) return 0;
 
     for (size_t i = 0; i <= size; i++)
         if (ch1[i] != ch2[i]) return 0;
