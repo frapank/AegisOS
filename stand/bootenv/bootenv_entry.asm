@@ -1,11 +1,9 @@
 [bits 32]
-jmp start
 
-section .entry
-global start
+global _start
 extern bootenv_entry
 
-start:
+_start:
     cli
 
     call bootenv_entry
@@ -13,6 +11,3 @@ start:
 .halt:
     hlt
     jmp .halt
-
-
-times 8192 - ($-$$) db 0
