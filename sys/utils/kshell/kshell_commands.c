@@ -64,7 +64,7 @@ void cmd_phy_free(struct kernel_context* ctx)
 /* General Info Commands */
 static char* about_msg[] = {
     "==================================\n"
-    "           LainOS KShell          \n"
+    "           AegisOS KShell         \n"
     "  Type help to view all commands  \n"
     "==================================\n"
 };
