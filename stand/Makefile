@@ -47,4 +47,8 @@ boot: $(BOOTENV_OBJ) $(STAND_BUILD_DIR)/bootblock.bin $(STAND_BUILD_DIR)/loader.
 		-Map=$(STAND_BUILD_DIR)/bootenv_linkmap.txt
 	@$(OBJCOPY) -O binary $(STAND_BUILD_DIR)/bootenv.elf $(STAND_BUILD_DIR)/bootenv.bin
 
-.PHONY: boot
+format:
+	@$(MESS) '[$(CYAN)FMT$(RESET)] %s\n' 'Formatting stand sources'
+	@$(CLANG_FORMAT) $(CLANG_FMT_FLAGS) -i $(BOOTENV_SRC)
+
+.PHONY: boot format

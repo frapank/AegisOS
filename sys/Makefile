@@ -7,6 +7,7 @@ LINK_FILE 		:= $(SYS_DIR)/$(LINK)
 ASM_DFLAGS 		:= -g -F dwarf
 INCLUDE_FLAGS 	:= -I$(INC_DIR)
 
+C_FORMAT_FILES  := $(shell find $(SRC_DIR) -type f -name "*.c")
 SRC_FILES 		:= $(shell find $(SRC_DIR) -type f -name "*.c" | sed "s|^$(SRC_DIR)/||")
 OBJ_FILES 		:= $(patsubst %.c,$(SYS_BUILD_DIR)/%.o,$(SRC_FILES))
 
@@ -41,4 +42,8 @@ kernel: $(SYS_BUILD_DIR)/kernel_entry.o $(SYS_BUILD_DIR)/isr_asm.o $(OBJ_FILES)
 	@$(MESS) '[$(MAGENTA)BIN$(RESET)] %s\n' 'Generating full_kernel.bin'
 	@$(OBJCOPY) -O binary $(SYS_BUILD_DIR)/full_kernel.elf $(SYS_BUILD_DIR)/full_kernel.bin
 
-.PHONY: kernel
+format:
+	@$(MESS) '[$(CYAN)FMT$(RESET)] %s\n' 'Formatting sys sources'
+	@$(CLANG_FORMAT) $(CLANG_FMT_FLAGS) -i $(C_FORMAT_FILES)
+
+.PHONY: kernel format
