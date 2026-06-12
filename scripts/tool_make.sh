@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+
 set -Eeuo pipefail
 trap 'log_error "Error at line ${LINENO}: ${BASH_COMMAND} (exit code: $?)"' ERR
 EXIT_CODE=0
@@ -11,6 +12,9 @@ BIN_PATH="$ROOT_DIR/tools"
 TEMP_PATH="$ROOT_DIR/temp"
 TARGET="i386-elf"
 NPROC=4
+
+BINUTILS_VER="2.40"
+GCC_VER="15.2.0"
 
 log() {
     local level="$1"
@@ -37,7 +41,7 @@ detect_priv_cmd() {
 
 run_root() {
     if [[ -n "${PRIV_CMD:-}" ]]; then
-        $PRIV_CMD bash -c "$*"
+        "$PRIV_CMD" "$@"
     else
         "$@"
     fi
@@ -50,6 +54,17 @@ require() {
     fi
 }
 
+require_lib() {
+    local name="$1" pkg="$2" gentoo="$3" debian="$4"
+    if pkg-config --exists "$pkg" 2>/dev/null; then
+        return 0
+    fi
+    log_error "Libreria '$name' non trovata."
+    log_error "  Gentoo: emerge $gentoo"
+    log_error "  Debian: apt install $debian"
+    exit 1
+}
+
 require_tools() {
     require wget
     require tar
@@ -60,7 +75,21 @@ require_tools() {
     require ar
     require ranlib
     require strip
+
+    require_lib gmp  "gmp"   "dev-libs/gmp"        "libgmp-dev"
+    require_lib mpfr "mpfr"  "dev-libs/mpfr"        "libmpfr-dev"
+    require_lib mpc  "mpc"   "dev-libs/mpc"         "libmpc-dev"
 }
+
+afe_rm_rf() {
+    local path="${1:?safe_rm_rf: dir not found}"
+    if [[ "$path" == "/" || "$path" == "$HOME" ]]; then
+        log_error "can't remove: '$path'"
+        return 1
+    fi
+    rm -rf -- "$path"
+}
+
 
 init() {
     log_info "Installing in: $BIN_PATH"
@@ -75,20 +104,22 @@ init() {
 
 get() {
     log_info "Downloading binutils and gcc..."
-    if ! wget -c https://ftp.gnu.org/gnu/binutils/binutils-2.40.tar.xz; then
+    if ! wget -c --timeout=60 --tries=3 \
+            "https://ftp.gnu.org/gnu/binutils/binutils-${BINUTILS_VER}.tar.xz"; then
         log_error "Failed to download binutils."
         exit 1
     fi
-    if ! wget -c https://ftp.gnu.org/gnu/gcc/gcc-13.2.0/gcc-13.2.0.tar.xz; then
+    if ! wget -c --timeout=60 --tries=3 \
+            "https://ftp.gnu.org/gnu/gcc/gcc-${GCC_VER}/gcc-${GCC_VER}.tar.xz"; then
         log_error "Failed to download gcc."
         exit 1
     fi
 
-    if ! tar -xf binutils-2.40.tar.xz; then
+    if ! tar -xf "binutils-${BINUTILS_VER}.tar.xz"; then
         log_error "Failed to extract binutils."
         exit 1
     fi
-    if ! tar -xf gcc-13.2.0.tar.xz; then
+    if ! tar -xf "gcc-${GCC_VER}.tar.xz"; then
         log_error "Failed to extract gcc."
         exit 1
     fi
@@ -98,29 +129,27 @@ get() {
 build_bin_utils() {
     log_info "Building binutils..."
     mkdir -p build-binutils
-    cd build-binutils
-    ../binutils-2.40/configure --target=$TARGET --prefix=$BIN_PATH --disable-nls --disable-werror
-    make -j$NPROC
+    pushd build-binutils > /dev/null
+    "../binutils-${BINUTILS_VER}/configure" \
+        --target="$TARGET" --prefix="$BIN_PATH" \
+        --disable-nls --disable-werror
+    make -j"$NPROC"
     make install
-    cd ..
+    popd > /dev/null
     log_success "Bin utils done"
-}
-
-prepare() {
-    cd gcc-13.2.0
-    ./contrib/download_prerequisites
-    cd ..
 }
 
 build_gcc() {
     export PATH="$BIN_PATH/bin:$PATH"
     log_info "Building GCC (stage 1)..."
     mkdir -p build-gcc
-    cd build-gcc
-    ../gcc-13.2.0/configure --target=$TARGET --prefix=$BIN_PATH --disable-nls \
+    pushd build-gcc > /dev/null
+    CXXFLAGS="-fno-char8_t" "../gcc-${GCC_VER}/configure" \
+        --target="$TARGET" --prefix="$BIN_PATH" --disable-nls \
         --enable-languages=c --without-headers --disable-multilib
-    make -j$NPROC all-gcc
+    make -j"$NPROC" all-gcc
     make install-gcc
+    popd > /dev/null
     log_success "GCC done"
 }
 
@@ -137,9 +166,13 @@ cleanup() {
         log_success "Build completed, keeping $BIN_PATH"
     fi
 
-    log_info "Cleaning temporary files..."
-    rm -rf "$TEMP_PATH"
-    log_success "Cleaning done!"
+    if [ $EXIT_CODE -eq 0 ]; then
+        log_info "Cleaning temporary files..."
+        rm -rf "$TEMP_PATH"
+        log_success "Cleaning done!"
+    else
+        log_error "Build failed, preserving $TEMP_PATH"
+    fi
 }
 
 main() {
@@ -148,7 +181,6 @@ main() {
     init
     get
     build_bin_utils
-    prepare
     build_gcc
 }
 
