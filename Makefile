@@ -22,6 +22,10 @@ MAKE_IMG_SCRIPT	:= $(SCRIPTS_DIR)/img_maker.sh
 RUN_SCRIPT		:= $(SCRIPTS_DIR)/img_run.sh
 FLASH_SCRIPT	:= $(SCRIPTS_DIR)/img_flash.sh
 
+CLANG_FORMAT     := clang-format
+CLANG_FMT_FLAGS  := --style=file
+export CLANG_FORMAT CLANG_FMT_FLAGS
+
 # MSG
 MESS			:= printf
 RESET       	:= \033[0m
@@ -53,6 +57,15 @@ sys:
 # Stand
 stand:
 	@$(MAKE) -C $(STAND_DIR)/
+
+# Format
+format: format-stand format-sys
+
+format-sys:
+	@$(MAKE) -C $(SYS_DIR)/ format
+
+format-stand:
+	@$(MAKE) -C $(STAND_DIR)/ format
 
 # VM
 img-clean:
@@ -86,4 +99,6 @@ clean-sys:
 	@rm -rf $(SYS_BUILD_DIR)
 
 # PHONY
-.PHONY: all sys stand img-clean img-create img-flash img-run clean clean-stand clean-sys
+.PHONY: all sys stand img-clean img-create img-flash img-run \
+        clean clean-stand clean-sys \
+        format format-sys format-stand
