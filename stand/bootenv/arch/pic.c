@@ -3,14 +3,14 @@
 #include "utils/types.h"
 
 #define PIC_MASTER_COMMAND 0x20
-#define PIC_MASTER_DATA    0x21
-#define PIC_SLAVE_COMMAND  0xA0
-#define PIC_SLAVE_DATA     0xA1
+#define PIC_MASTER_DATA 0x21
+#define PIC_SLAVE_COMMAND 0xA0
+#define PIC_SLAVE_DATA 0xA1
 
 #define INIT_AND_WAIT_ICW4 0x11
 
-#define OFFSET_MASTER      0x20
-#define OFFSET_SLAVE       0x28
+#define OFFSET_MASTER 0x20
+#define OFFSET_SLAVE 0x28
 
 static void pic_remap(void)
 {
@@ -37,12 +37,9 @@ static void pic_remap(void)
     // Restore mask
     outb(PIC_MASTER_DATA, mask1);
     outb(PIC_SLAVE_DATA, mask2);
-
 }
 
 void pic_init(void)
 {
     pic_remap();
 }
-
-

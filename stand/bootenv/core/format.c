@@ -10,9 +10,9 @@ void int_to_ascii(u32 n, c8* buffer)
         int ret = n % 10;
         temp[i++] = ret + '0';
         n /= 10;
-    } while(n > 0);
+    } while (n > 0);
 
-    for(int j = 0; j < i; j++)
+    for (int j = 0; j < i; j++)
         buffer[j] = temp[i - j - 1];
 
     buffer[i] = 0;
@@ -34,7 +34,8 @@ u32 asciihex_to_uint(c8* buffer)
         else if (c >= 'a' && c <= 'f')
             result = result * 16 + (c - 'a' + 10);
 
-        else return 0;
+        else
+            return 0;
     }
 
     return result;
