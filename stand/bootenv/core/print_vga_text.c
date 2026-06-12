@@ -6,16 +6,16 @@
 #define DEFAULT_BACKGROUND_COLOR 0
 #define DEFAULT_TEXT_COLOR 15
 
-static struct line_data cursor = {0, 0};
+static struct line_data cursor = { 0, 0 };
 
 void new_linek(void);
 void clear_screenk(void);
 static void scroll_if_needed(void);
-static void vprint(char *msg, __builtin_va_list args);
-void printk(char *msg, ...) ;
+static void vprint(char* msg, __builtin_va_list args);
+void printk(char* msg, ...);
 
 /* vprint() main function */
-static void vprint(char *msg, __builtin_va_list args) 
+static void vprint(char* msg, __builtin_va_list args)
 {
     enum vga_color text_color = DEFAULT_TEXT_COLOR;
     enum vga_color background_color = DEFAULT_BACKGROUND_COLOR;
@@ -31,7 +31,8 @@ static void vprint(char *msg, __builtin_va_list args)
                 break;
 
             case '\r':
-                vga_put_char(' ', text_color, background_color, cursor.x, cursor.y);
+                vga_put_char(
+                    ' ', text_color, background_color, cursor.x, cursor.y);
                 cursor.x = 0;
                 scroll_if_needed();
                 break;
@@ -39,7 +40,8 @@ static void vprint(char *msg, __builtin_va_list args)
             case '\b':
                 if (cursor.x > 0) {
                     cursor.x--;
-                    vga_put_char(' ', text_color, background_color, cursor.x, cursor.y);
+                    vga_put_char(
+                        ' ', text_color, background_color, cursor.x, cursor.y);
                 }
                 break;
 
@@ -48,20 +50,23 @@ static void vprint(char *msg, __builtin_va_list args)
                     int val = __builtin_va_arg(args, int);
                     char ascii_buffer[21];
                     int_to_ascii(val, ascii_buffer);
-                    printk("%t%b%s", text_color, background_color, ascii_buffer);
+                    printk(
+                        "%t%b%s", text_color, background_color, ascii_buffer);
                     i++;
                     break;
                 }
 
                 if (msg[i + 1] == 'b') {
-                    enum vga_color val_color = __builtin_va_arg(args, unsigned int);
+                    enum vga_color val_color =
+                        __builtin_va_arg(args, unsigned int);
                     background_color = val_color;
                     i++;
                     break;
                 }
 
                 if (msg[i + 1] == 't') {
-                    enum vga_color val_color = __builtin_va_arg(args, unsigned int);
+                    enum vga_color val_color =
+                        __builtin_va_arg(args, unsigned int);
                     text_color = val_color;
                     i++;
                     break;
@@ -71,7 +76,8 @@ static void vprint(char *msg, __builtin_va_list args)
                     int val = __builtin_va_arg(args, unsigned int);
                     char ascii_buffer[21];
                     int_to_ascii(val, ascii_buffer);
-                    printk("%t%b%s", text_color, background_color, ascii_buffer);
+                    printk(
+                        "%t%b%s", text_color, background_color, ascii_buffer);
                     i++;
                     break;
                 }
@@ -96,15 +102,18 @@ static void vprint(char *msg, __builtin_va_list args)
                 }
 
                 if (msg[i + 1] == 's') {
-                    char *s = __builtin_va_arg(args, char *);
+                    char* s = __builtin_va_arg(args, char*);
                     for (int j = 0; s[j] != '\0'; j++) {
                         if (cursor.x >= VGA_WIDTH) {
                             cursor.x = 0;
                             cursor.y++;
                             scroll_if_needed();
                         }
-                        vga_put_char((unsigned char)s[j], text_color, background_color,
-                                     cursor.x, cursor.y);
+                        vga_put_char((unsigned char)s[j],
+                                     text_color,
+                                     background_color,
+                                     cursor.x,
+                                     cursor.y);
                         cursor.x++;
                     }
                     i++;
@@ -119,7 +128,10 @@ static void vprint(char *msg, __builtin_va_list args)
                     cursor.y++;
                     scroll_if_needed();
                 }
-                vga_put_char((unsigned char)ch, text_color, background_color, cursor.x,
+                vga_put_char((unsigned char)ch,
+                             text_color,
+                             background_color,
+                             cursor.x,
                              cursor.y);
                 cursor.x++;
         }
@@ -132,29 +144,30 @@ static void vprint(char *msg, __builtin_va_list args)
  * Moves existing lines up and clears the new blank rows.
  * Updates cursor.y to stay within visible area.
  */
-static void scroll_if_needed(void) 
+static void scroll_if_needed(void)
 {
-    if (cursor.y < VGA_HEIGHT) 
+    if (cursor.y < VGA_HEIGHT)
         return;
 
-    u16 *vga = (u16 *) VIDEO_MEMORY;
+    u16* vga = (u16*)VIDEO_MEMORY;
 
     int lines = cursor.y - (VGA_HEIGHT - 1);
-    if (lines <= 0) 
+    if (lines <= 0)
         return;
-    if (lines > VGA_HEIGHT) 
+    if (lines > VGA_HEIGHT)
         lines = VGA_HEIGHT;
 
     u32 bytes_per_row = VGA_WIDTH * sizeof(u16);
     u32 src_offset = lines * bytes_per_row;
     u32 move_bytes = (VGA_HEIGHT * bytes_per_row) - src_offset;
 
-    kmemmove((void *)vga, (void *)((u8*)vga + src_offset), move_bytes);
+    kmemmove((void*)vga, (void*)((u8*)vga + src_offset), move_bytes);
 
-    u8 att = ((DEFAULT_BACKGROUND_COLOR & 0x0F) << 4) | (DEFAULT_TEXT_COLOR & 0x0F);
+    u8 att =
+        ((DEFAULT_BACKGROUND_COLOR & 0x0F) << 4) | (DEFAULT_TEXT_COLOR & 0x0F);
     u16 blank = (' ' | (att << 8));
 
-    u16 *last_row = vga + (VGA_HEIGHT - lines) * VGA_WIDTH;
+    u16* last_row = vga + (VGA_HEIGHT - lines) * VGA_WIDTH;
     for (int r = 0; r < lines; r++)
         kmemset16(last_row + r * VGA_WIDTH, blank, VGA_WIDTH);
 
@@ -173,7 +186,7 @@ static void scroll_if_needed(void)
  * Note: without this wrapper, the variadic list would be
  * invalid and behavior would be undefined.
  */
-void printk(char *msg, ...) 
+void printk(char* msg, ...)
 {
     __builtin_va_list args;
     __builtin_va_start(args, msg);
@@ -191,7 +204,7 @@ void new_linek(void)
 
 void clear_screenk(void)
 {
-    u16* vga = (u16*) VIDEO_MEMORY;
+    u16* vga = (u16*)VIDEO_MEMORY;
     u16 blank = (' ' | (DEFAULT_ATT << 8));
 
     kmemset16(vga, blank, VGA_WIDTH * VGA_HEIGHT);
