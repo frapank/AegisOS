@@ -4,13 +4,14 @@
 #include "drivers/keyboard.h"
 #include "drivers/vga_text.h"
 
-char* wlc_message = "+----------------------------+\n"
-                    "|                            |\n"
-                    "|       L A I N   O S        |\n"
-                    "|                            |\n"
-                    "|   experimental bootloader  |\n"
-                    "|                            |\n"
-                    "+----------------------------+";
+char* wlc_message = "\n"
+                    "   /\\\n"
+                    "  /  \\     AegisOS\n"
+                    " / /\\ \\\n"
+                    " \\ \\/ /    Experimental bootloader\n"
+                    "  \\  /\n"
+                    "   \\/\n"
+                    "\n";
 
 void bootenv_entry(void)
 {
