@@ -57,7 +57,7 @@ entry:
     jc disk_error 
 
     ; jmp second stage
-    call start_second
+    jmp start_second
 
 
 disk_error:
