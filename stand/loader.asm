@@ -44,8 +44,15 @@ entry:
 
     push word [boot_disk]
     push dap
+
+    ; read disk
     call read_disk
     jc disk_error 
+
+    ; start protected mode
+    mov ax, 0x2401
+    int 0x15
+
     call start_protected
 
 disk_error:
