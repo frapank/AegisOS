@@ -5,7 +5,7 @@ read_disk:
 
     mov si, [bp+4]              ; DAP
     mov dl, [bp+6]              ; Boot disk
-
+    clc
     mov ah, 0x42                ; extended read 
     int 0x13 
 
