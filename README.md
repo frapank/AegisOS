@@ -2,8 +2,6 @@
 
 > [!WARNING]
 > This README describes planned and conceptual features.
-> The bootloader is currently being rewritten. As result, the kernel will not boot from the current main branch.
-> If you want to run the kernel, use the codebase before the `rewrite/core` changes.
 
 AegisOS is a microkernel operating system built as a fully modular ecosystem of components: bootloader, kernel, drivers, and user-space services.
 
