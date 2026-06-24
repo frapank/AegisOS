@@ -111,13 +111,13 @@ service shell {
 ## Roadmap
 
 **Done:** 
-- ISR/IRQ, PIC, VGA, Keyboard, Kernel Shell, PMM
+- ISR/IRQ, PIC, VGA, Keyboard, Kernel Shell, PMM, Kernel Loader
 
 **In Progress:** 
-- EXT2 Filesystem
+- 64-bit kernel
 
 **Planned:**
-- 64-bit kernel, Virtual Memory, Timer, Scheduler, Context Switch, Syscalls, User Mode, ELF Loader, Init System, User Shell, Logging, Full FS
+- Virtual Memory, Timer, Scheduler, Context Switch, Syscalls, User Mode, ELF Loader, Init System, User Shell, Logging, Full FS
 
 ## License
 This project is licensed under the GNU GPL v3.0 – see the LICENSE file for details.
