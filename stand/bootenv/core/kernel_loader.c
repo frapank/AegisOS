@@ -37,8 +37,9 @@ static u32 get_part2_lba(void)
         return 0;
     if (mbr[510] != 0x55 || mbr[511] != 0xAA)
         return 0;
-    
-    mbr_part_t* p2 = (mbr_part_t*)(mbr + 0x1CE); // partition 2 = 0x1BE + 1*16 = 0x1CE
+
+    mbr_part_t* p2 =
+        (mbr_part_t*)(mbr + 0x1CE); // partition 2 = 0x1BE + 1*16 = 0x1CE
     return p2->lba_start;
 }
 
