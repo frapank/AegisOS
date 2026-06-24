@@ -12,7 +12,8 @@
 #endif
 
 #define BOOT_IDENTIFIER 0x1BADB002
-#define KERNEL_END_ADDRESS 0x00100000 // May change
+extern char kernel_end;
+#define KERNEL_END_ADDRESS ((u32) & kernel_end)
 
 static u32 calculate_total_memory(struct boot_info* boot_info)
 {
@@ -47,6 +48,8 @@ static void system_init(struct kernel_context* ctx, u32 magic)
 
 void kernel_main(u32 magic, u32 boot_info_addr)
 {
+
+    printk("TEST KERNEL STARTED");
     struct kernel_context ctx;
     ctx.kernel_boot_info = *boot_info_init(boot_info_addr);
 
