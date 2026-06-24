@@ -1,0 +1,37 @@
+name: Format check
+
+on:
+  push:
+    branches: [ main, master, dev ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  format:
+    name: Format check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install clang-format
+        run: sudo apt-get install -y --no-install-recommends clang-format
+
+      - name: Create config.mk for CI
+        run: |
+          cat > config.mk << 'EOF'
+          ASM     := nasm
+          CC      := i386-elf-gcc
+          LD      := i386-elf-ld
+          OBJCOPY := i386-elf-objcopy
+          FLAGS   :=
+          VMDISK  := 256
+          VMRAM   := 128
+          EOF
+
+      - name: Check formatting
+        run: |
+          make format
+          if ! git diff --exit-code; then
+            echo "Files above are not formatted. Run 'make format' locally."
+            exit 1
+          fi
