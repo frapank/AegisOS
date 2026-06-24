@@ -8,7 +8,7 @@ void panick(char* msg)
     cli();
     clear_screenk();
 
-    printk("%t\n]== KERNEL PANIC ==-\n\n", VGA_COLOR_LIGHT_RED);
+    printk("%t\n]== BOOTENV PANIC ==-\n\n", VGA_COLOR_LIGHT_RED);
     printk(" \t%t %s\n\n", VGA_COLOR_WHITE, msg);
 
     for (;;)
