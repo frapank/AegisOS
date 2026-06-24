@@ -79,17 +79,20 @@ setup_loop_device() {
 
 mount_and_copy_kernel() {
     log_info "Mounting and copying the image. Root required:"
-    run_root <<EOF
-rm -rf tmp/
-mkdir tmp/
-mount ${LOOPDEV}p2 tmp/
-mkdir -p tmp/boot
-cp $KERNEL tmp/boot/lain_kernel.bin
-umount tmp/
-rm -rf tmp/
-losetup -d "$LOOPDEV"
-EOF
-    log_success "Copied the image"
+
+    rm -rf tmp/
+    mkdir -p tmp/
+
+    run_root mount "${LOOPDEV}p2" tmp/
+
+    run_root mkdir -p tmp/boot
+    run_root cp "$KERNEL" tmp/boot/lain_kernel.bin
+
+    run_root umount tmp/
+    rm -rf tmp/
+    run_root losetup -d "$LOOPDEV"
+
+    log_success "Copied the image successfully"
 }
 
 main() {

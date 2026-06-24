@@ -1,5 +1,6 @@
 #include "arch/interrupts/idt.h"
 #include "arch/pic.h"
+#include "core/kernel_loader.h"
 #include "core/print_vga_text.h"
 #include "drivers/keyboard.h"
 #include "drivers/vga_text.h"
@@ -15,13 +16,15 @@ char* wlc_message = "\n"
 
 void bootenv_entry(void)
 {
-    // Init
     idt_init();
     pic_init();
 
-    // User
     clear_screenk();
     printk(wlc_message);
 
-    // Finish
+    kernel_load_and_run();
+
+    printk("[-] Kernel returned\n");
+    for (;;)
+        __asm__ volatile("hlt");
 }
