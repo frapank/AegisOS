@@ -14,7 +14,7 @@ typedef struct {
     u32 s_free_blocks_count;
     u32 s_free_inodes_count;
     u32 s_first_data_block; // 1 for 1024-byte blocks, 0 otherwise
-    u32 s_log_block_size; // block_size = 1024 << s_log_block_size
+    u32 s_log_block_size;   // block_size = 1024 << s_log_block_size
     u32 s_log_frag_size;
     u32 s_blocks_per_group;
     u32 s_frags_per_group;
@@ -87,7 +87,7 @@ static u16 g_inode_size;
 
 // Working buffers static, go to BSS, never stack-allocated
 static u8 g_block_buf[4096];  // generalpurpose block buffer
-static u32 g_indir_buf[1024]; // singleindirect block pointer list 
+static u32 g_indir_buf[1024]; // singleindirect block pointer list
 
 static void ext2_memcpy(void* dst, const void* src, u32 n)
 {
@@ -218,7 +218,7 @@ static u32 read_file_data(ext2_inode_t* inode, void* buffer, u32 max_size)
         copied += chunk;
     }
 
-    // Single-indirect block [12] 
+    // Single-indirect block [12]
     if (copied < size && inode->i_block[EXT2_IND_BLOCK] != 0) {
         u32 ptrs = g_block_size / sizeof(u32);
 
