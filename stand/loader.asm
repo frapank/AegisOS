@@ -13,7 +13,7 @@ CODE_SEG                equ gdt_code - gdt_start
 DATA_SEG                equ gdt_data - gdt_start
 
 BOOTENV_LOCATION   equ 0x2000
-BOOTENV_SECTORS    equ 16
+BOOTENV_SECTORS    equ 40
 BOOTENV_START_LBA  equ 8192
 
 CR0_PE                  equ 1
@@ -30,7 +30,7 @@ dap:
 ; Includes
 %include "bint/graphics.asm"
 %include "bint/read_disk.asm"
-
+%include "bint/e820.asm"
 
 ; Entry
 entry:
@@ -49,9 +49,12 @@ entry:
     call read_disk
     jc disk_error 
 
-    ; start protected mode
+    ; A20 enable
     mov ax, 0x2401
     int 0x15
+
+    ; Start protected
+    call e820_detect
 
     call start_protected
 
