@@ -8,13 +8,21 @@ on:
 
 jobs:
   format:
-    name: Format check
     runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
 
-      - name: Install clang-format
-        run: sudo apt-get install -y --no-install-recommends clang-format
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Clang-Format 22
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y wget software-properties-common gnupg
+          wget https://apt.llvm.org/llvm.sh
+          chmod +x llvm.sh
+          sudo ./llvm.sh 22
+          sudo apt-get install -y clang-format-22
+          sudo ln -sf /usr/bin/clang-format-22 /usr/bin/clang-format
 
       - name: Create config.mk for CI
         run: |
@@ -32,6 +40,6 @@ jobs:
         run: |
           make format
           if ! git diff --exit-code; then
-            echo "Files above are not formatted. Run 'make format' locally."
-            exit 1
+          echo "Files above are not formatted. Run 'make format' locally."
+          exit 1
           fi
