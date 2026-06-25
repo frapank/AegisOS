@@ -71,11 +71,14 @@ void cmd_phy_free(struct kernel_context* ctx)
 }
 
 /* General Info Commands */
-static char* about_msg[] = { "==================================\n"
-                             "           AegisOS KShell         \n"
-                             "  Type help to view all commands  \n"
-                             "==================================\n" };
-static int about_msg_len = sizeof(about_msg) / sizeof(about_msg[0]);
+char* wlc_message = "\n"
+                    "   /\\\n"
+                    "  /  \\     AegisOS\n"
+                    " / /\\ \\\n"
+                    " \\ \\/ /    Experimental kernel shell\n"
+                    "  \\  /     Type help to view all commands\n"
+                    "   \\/\n"
+                    "\n";
 
 void cmd_ismem(struct kernel_context* ctx)
 {
@@ -94,9 +97,7 @@ void cmd_ismem(struct kernel_context* ctx)
 void cmd_about(struct kernel_context* ctx)
 {
     (void)ctx;
-    for (int i = 0; i < about_msg_len; i++) {
-        printk(about_msg[i]);
-    }
+    printk(wlc_message);
 }
 
 void cmd_binfo(struct kernel_context* ctx)
