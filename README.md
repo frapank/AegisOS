@@ -3,121 +3,71 @@
 > [!WARNING]
 > This README describes planned and conceptual features.
 
-AegisOS is a microkernel operating system built as a fully modular ecosystem of components: bootloader, kernel, drivers, and user-space services.
+AegisOS is a microkernel operating system built from scratch for x86 (i686).
 
 At its core, the kernel does as little as possible. It exists only to manage memory and isolate processes, while everything else: filesystems, networking, and system services, runs independently in user space.
 
 The goal of AegisOS is to explore a more composable and secure operating system design, where every subsystem is replaceable, testable, and isolated by default.
 
-## File System
-The file system is simple:
+See [docs/](docs/) for architecture and design details.
 
-```text
-/
-├─ /dev       ( devices )
-├─ /home      ( user homes )
-├─ /bin       ( binary files )
-├─ /tmp       ( temporary files )
-├─ /srv       ( init system files )
-├─ /etc       ( configurations )
-├─ /cmp       ( capability system )
-│  ├─ /set    ( capability sets )
-│  ├─ /usr    ( capability users )
-│  └─ /fin    ( capability final )
-└─ /proc      ( process information )
-````
+## Build
 
-## Capability Permission
-In traditional Unix systems we have: users, groups, and permissions.
-Instead, AegisOS only uses capabilities assigned to users.
+First, build the cross-compiler. This only needs to be done once:
 
-"Capabilities" are the permissions available to a specific process, such as: READ, WRITE, EXECUTE and NETWORK.
-
-These are defined inside a set stored in `/cmp/set/` with the `.cset` suffix.
-
-By default, a user is itself a set of capabilities.
-When a user registers, they receive default capability sets taken from `/cmp/set/default.cset` plus additional capability sets defined in their user file located at `/usr/user-name.cuser`.
-
-Every process inherits the `.cset` files from its parent process.
-There will be syscalls that allow removing permissions from child processes, but never adding them.
-
-The initial `capabilities` are loaded by `/cmp/capability_init*`; this program is started by the init system.
-
-A `.cset` file is structured like this:
-```text
-{
-    READ: "/home/example/path/*"
-    WRITE: "/home/example/path/*"
-    EXECUTE: "/home/example/path/*"
-
-    READ: "/etc/random.conf"
-    READ: "/tmp"
-
-    NET_CONNECT: TCP 1.2.3.0/24 80 443
-    NET_BIND: TCP * 1024-65535
-    NET_LISTEN: TCP 80
-    NET_RAW: ETHERNET
-}
+```bash
+./make_tools
 ```
 
-A `.cuser` file is structured like this:
-```text
-{
-    ADD: "/cmp/set/default.cset"
-    REMOVE: "/cmp/set/etest.cset"
-    ADD: "/cmp/set/audio.cset"
-    ADD: "/cmp/set/video.cset"
-    ADD: {
-       READ: "/home/example/path/*"
-    }
-}
+This builds `i386-elf-gcc` and `i386-elf-ld` into `tools/` and takes around 10 minutes.
+You need `gcc`, `g++`, `make`, `wget`, `libgmp-dev`, `libmpfr-dev`, `libmpc-dev` on the host.
+
+Then configure the build:
+
+```bash
+./configure [options]
 ```
 
-It is important to remember that the prefix of a `.cset` file must match the username.
+| Option | Default | Description |
+|---|---|---|
+| `--set-vmram=M\|G` | `512M` | QEMU RAM |
+| `--set-vmdisk=N` | `1024` | Disk image size in MB |
+| `--set-gcc=PATH` | `tools/bin/i386-elf-gcc` | Custom GCC path |
+| `--set-ld=PATH` | `tools/bin/i386-elf-ld` | Custom LD path |
+| `--set-objcopy=PATH` | `tools/bin/i386-elf-objcopy` | Custom objcopy path |
+| `--set-asm=PATH` | `nasm` | Custom assembler path |
+| `--enable-debug` | off | Enable debug flags and symbols |
+| `--disable-kshell` | on | Disable the kernel shell |
 
-These files can be modified and updated through syscalls.
-The syscall will read the file and write it at a low level using inode objects inside `/cmp/fin`.
+Then:
 
-With user-space programs, a cache system in `/cmp/fin/cache` will allow an inode object to update its high-level file position if its location changes.
+```bash
+make                # build bootloader and kernel
+make img-create     # create a blank disk image
+make img-flash      # write the binaries to the disk image
+make img-run        # run in QEMU
+```
 
-In the end, everything will become compiled and cached inside `/cmp/fin/`, where every object will be represented as either an `inode_range` or an `inode`.
+Other useful targets:
 
-## Init System
-The init system is the only program started by the kernel. It is located in the directory `/bin/AgInit*`. This file reads a configuration file in `/etc/init.aegis` and starts each process in order.
-When starting a process, it also sets the `cap` using a `.cset` for the launched process.
-
-An example of how `/etc/init.aegis` will be structured:
-
-```text
-service filesystem {
-    exec: "/bin/fsd"
-    caps: "/cmp/set/fs.cset"
-    restart: never
-}
-
-service network {
-    exec: "/bin/netd"
-    caps: "/cmp/set/net.cset"
-    depends: filesystem
-}
-
-service shell {
-    exec: "/bin/sh"
-    caps: "/cmp/set/user.cset"
-    depends: filesystem network
-}
+```bash
+make clean          # remove build/
+make clean-stand    # remove build/stand/
+make clean-sys      # remove build/sys/
+make format         # clang-format all C sources
 ```
 
 ## Roadmap
 
-**Done:** 
+**Done:**
 - ISR/IRQ, PIC, VGA, Keyboard, Kernel Shell, PMM, Kernel Loader
 
-**In Progress:** 
+**In Progress:**
 - 64-bit kernel
 
 **Planned:**
 - Virtual Memory, Timer, Scheduler, Context Switch, Syscalls, User Mode, ELF Loader, Init System, User Shell, Logging, Full FS
 
 ## License
-This project is licensed under the GNU GPL v3.0 – see the LICENSE file for details.
+
+This project is licensed under the GNU GPL v3.0 - see the LICENSE file for details.
