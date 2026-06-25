@@ -55,7 +55,6 @@ main() {
         -machine pc \
         -drive file="$DISK_IMG",format=raw \
         -m "$VMRAM" \
-        -enable-kvm \
         -boot c \
         -serial stdio
 }
