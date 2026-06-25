@@ -48,8 +48,6 @@ static void system_init(struct kernel_context* ctx, u32 magic)
 
 void kernel_main(u32 magic, u32 boot_info_addr)
 {
-
-    printk("TEST KERNEL STARTED");
     struct kernel_context ctx;
     ctx.kernel_boot_info = *boot_info_init(boot_info_addr);
 
