@@ -1,5 +1,4 @@
-#ifndef PRINT_H
-#define PRINT_H
+#pragma once
 
 #include "drivers/vga_text.h"
 
@@ -12,5 +11,3 @@ void printk(char *msg, ...);
 
 void clear_screenk(void);
 void new_linek(void);
-
-#endif

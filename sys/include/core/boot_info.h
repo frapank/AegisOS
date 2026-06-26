@@ -1,5 +1,4 @@
-#ifndef boot_info_h
-#define boot_info_h
+#pragma once
 
 #include "utils/types.h"
 #include "utils/safety.h"
@@ -31,5 +30,3 @@ struct boot_info {
 
 WARN_UNUSED_RESULT 
 struct boot_info* boot_info_init(u32 boot_info);
-
-#endif

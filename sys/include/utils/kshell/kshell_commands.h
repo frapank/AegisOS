@@ -1,5 +1,4 @@
-#ifndef KSHELL_COMMANDS_H
-#define KSHELL_COMMANDS_H
+#pragma once
 
 #include "core/kernel_context.h"
 
@@ -16,5 +15,3 @@ void cmd_binfo(struct kernel_context* ctx);
 void cmd_echo(struct kernel_context* ctx);
 void cmd_clear(struct kernel_context* ctx);
 void cmd_exit(struct kernel_context* ctx);
-
-#endif

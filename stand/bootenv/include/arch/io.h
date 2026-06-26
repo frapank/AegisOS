@@ -1,5 +1,4 @@
-#ifndef BUS_H
-#define BUS_H
+#pragma once
 
 #include "utils/types.h"
 
@@ -56,5 +55,3 @@ static inline void hlt()
 {
     __asm__ volatile("hlt");
 }
-
-#endif
