@@ -1,6 +1,3 @@
-#ifndef PIC_H
-#define PIC_H
+#pragma once
 
 void pic_init(void);
-
-#endif
