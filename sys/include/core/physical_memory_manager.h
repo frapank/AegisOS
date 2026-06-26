@@ -1,5 +1,4 @@
-#ifndef PHYSICAL_MEMORY_MANAGMENT_H
-#define PHYSICAL_MEMORY_MANAGMENT_H
+#pragma once
 
 #include "utils/types.h"
 #include "utils/safety.h"
@@ -10,5 +9,3 @@ void phmm_mark_region_free(u32 init_address, u32 size);
 WARN_UNUSED_RESULT u32* phmm_alloc_blocks(u32 num);
 void phmm_free_blocks(u32* addr, u32 num_block);
 u32 phmm_init(u32 init_address, u32 size);
-
-#endif

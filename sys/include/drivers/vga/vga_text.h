@@ -1,5 +1,4 @@
-#ifndef VGA_H
-#define VGA_H
+#pragma once
 
 #include "utils/types.h"
 #define VIDEO_MEMORY 0xb8000
@@ -28,5 +27,3 @@ enum vga_color {
 
 void vga_put_char(u8 c, u8 forecolour, u8 backcolour, u32 x, u32 y);
 void vga_update_cursor(u16 x, u16 y);
-
-#endif 

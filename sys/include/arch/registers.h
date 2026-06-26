@@ -1,5 +1,4 @@
-#ifndef REGISTERS_H
-#define REGISTERS_H
+#pragma once
 
 #include "utils/types.h"
 
@@ -41,6 +40,3 @@ typedef struct regs {
     u32 useresp;
     u32 ss;
 } __attribute__((packed)) regs_t;
-
-#endif
-

@@ -1,5 +1,4 @@
-#ifndef TYPES_H
-#define TYPES_H
+#pragma once
 
 /* Base types */
 typedef char               c8;
@@ -41,5 +40,3 @@ _Static_assert(sizeof(u16) == 2, "u16 should be 2 byte");
 _Static_assert(sizeof(u32) == 4, "u32 should be 4 byte");
 _Static_assert(sizeof(u64) == 8, "u64 should be 8 byte");
 _Static_assert(sizeof(s64) == 8, "s64 should be 8 byte");
-
-#endif
