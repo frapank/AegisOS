@@ -35,6 +35,7 @@ static void vprint(char* msg, __builtin_va_list args)
                     ' ', text_color, background_color, cursor.x, cursor.y);
                 cursor.x = 0;
                 scroll_if_needed();
+                vga_update_cursor(cursor.x, cursor.y);
                 break;
 
             case '\b':
@@ -42,6 +43,7 @@ static void vprint(char* msg, __builtin_va_list args)
                     cursor.x--;
                     vga_put_char(
                         ' ', text_color, background_color, cursor.x, cursor.y);
+                    vga_update_cursor(cursor.x, cursor.y);
                 }
                 break;
 
