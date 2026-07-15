@@ -97,11 +97,11 @@ void phmm_mark_region_used(u32 init_address, u32 size)
 u32* phmm_alloc_blocks(u32 num_blocks)
 {
     if ((blocks_max - used_blocks) <= num_blocks)
-        return NULL;
+        return nullptr;
 
     u32 block_address = find_first_free_blocks(num_blocks);
     if (block_address == PHMM_FIND_ERROR)
-        return NULL;
+        return nullptr;
 
     for (u32 i = 0; i < num_blocks; i++)
         set_block(block_address + i);

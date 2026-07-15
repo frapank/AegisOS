@@ -38,8 +38,9 @@ static char* const exception_names[32] = { "0: Division for zero",
                                            "31: Reserved" };
 
 #define UNDECLARED_ISR(n)                                                      \
+    [[noreturn]]                                                               \
     void isr##n##_man(struct regs* r)                                          \
-        __attribute__((noreturn, alias("default_isr_handler")))
+        __attribute__((alias("default_isr_handler")))
 
 UNDECLARED_ISR(0);
 UNDECLARED_ISR(1);
@@ -82,7 +83,8 @@ static void (*const isr_handlers[32])(struct regs*) = {
     isr28_man, isr29_man, isr30_man, isr31_man
 };
 
-static void __attribute__((noreturn)) default_isr_handler(struct regs* regs)
+[[noreturn]]
+static void default_isr_handler(struct regs* regs)
 {
     panick(exception_names[regs->int_no]);
     for (;;)
