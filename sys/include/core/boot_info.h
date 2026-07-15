@@ -28,5 +28,4 @@ struct boot_info {
     struct memory_map mem_map_entries[12];
 } __attribute__((packed));
 
-WARN_UNUSED_RESULT 
-struct boot_info* boot_info_init(u32 boot_info);
+[[nodiscard]] struct boot_info* boot_info_init(u32 boot_info);

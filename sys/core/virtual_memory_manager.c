@@ -2,7 +2,6 @@
 
 #include "utils/types.h"
 
-#define ALIGN(size) __attribute__((aligned(size)))
 #define PAGE_SIZE_BYTE 4096
 #define TABLE_IN_DIR 1024
 #define PAGE_IN_TABLE 1024

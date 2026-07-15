@@ -85,8 +85,8 @@ static void (*irq_table[16])() = {
     i686_IRQ12, i686_IRQ13, i686_IRQ14, i686_IRQ15
 };
 
-struct idt_entry idt[256] __attribute__((aligned(16)));
-struct idt_pointer idt_p __attribute__((aligned(16)));
+struct idt_entry alignas(16) idt[256];
+struct idt_pointer alignas(16) idt_p;
 
 static inline void set_idt_entry(u8 num, u32 base, u16 sel, u8 flags)
 {
