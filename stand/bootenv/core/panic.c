@@ -3,7 +3,7 @@
 #include "arch/io.h"
 #include "core/print_vga_text.h"
 
-void panick(char* msg)
+void panick(const char* msg)
 {
     cli();
     clear_screenk();

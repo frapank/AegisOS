@@ -70,7 +70,18 @@ struct idt_pointer {
     u32 base;
 } __attribute__((packed));
 
-static void (*isr_table[32])() = {
+constexpr u32 IDT_ENTRIES = 256u;
+constexpr u32 ISR_COUNT = 32u;
+constexpr u32 IRQ_COUNT = 16u;
+
+constexpr u8 IRQ_BASE_VECTOR = 0x20u;
+
+constexpr u16 KERNEL_CODE_SELECTOR = 0x08u;
+constexpr u8 IDT_INTERRUPT_GATE = 0x8Eu;
+
+constexpr u16 IDT_OFFSET_MASK = 0xFFFFu;
+
+static void (*isr_table[ISR_COUNT])(void) = {
     i686_ISR0,  i686_ISR1,  i686_ISR2,  i686_ISR3,  i686_ISR4,  i686_ISR5,
     i686_ISR6,  i686_ISR7,  i686_ISR8,  i686_ISR9,  i686_ISR10, i686_ISR11,
     i686_ISR12, i686_ISR13, i686_ISR14, i686_ISR15, i686_ISR16, i686_ISR17,
@@ -79,22 +90,25 @@ static void (*isr_table[32])() = {
     i686_ISR30, i686_ISR31
 };
 
-static void (*irq_table[16])() = {
+static void (*irq_table[IRQ_COUNT])(void) = {
     i686_IRQ0,  i686_IRQ1,  i686_IRQ2,  i686_IRQ3, i686_IRQ4,  i686_IRQ5,
     i686_IRQ6,  i686_IRQ7,  i686_IRQ8,  i686_IRQ9, i686_IRQ10, i686_IRQ11,
     i686_IRQ12, i686_IRQ13, i686_IRQ14, i686_IRQ15
 };
 
-struct idt_entry alignas(16) idt[256];
+struct idt_entry alignas(16) idt[IDT_ENTRIES];
 struct idt_pointer alignas(16) idt_p;
 
-static inline void set_idt_entry(u8 num, u32 base, u16 sel, u8 flags)
+static inline void set_idt_entry(u8 vector,
+                                 u32 handler,
+                                 u16 selector,
+                                 u8 attributes)
 {
-    idt[num].offset_low = base & 0xFFFF;
-    idt[num].selector = sel;
-    idt[num].zero = 0;
-    idt[num].type_attr = flags;
-    idt[num].offset_high = (base >> 16) & 0xFFFF;
+    idt[vector].offset_low = handler & IDT_OFFSET_MASK;
+    idt[vector].selector = selector;
+    idt[vector].zero = 0;
+    idt[vector].type_attr = attributes;
+    idt[vector].offset_high = (handler >> 16) & IDT_OFFSET_MASK;
 }
 
 void idt_init(void)
@@ -102,8 +116,8 @@ void idt_init(void)
     idt_p.limit = sizeof(idt) - 1;
     idt_p.base = (u32)&idt;
 
-    // Clear idt
-    for (int i = 0; i < 256; i++) {
+    // Clear IDT
+    for (u32 i = 0; i < IDT_ENTRIES; i++) {
         idt[i].offset_low = 0;
         idt[i].selector = 0;
         idt[i].zero = 0;
@@ -111,13 +125,19 @@ void idt_init(void)
         idt[i].offset_high = 0;
     }
 
-    // Set isr
-    for (int i = 0; i < 32; i++)
-        set_idt_entry(i, (u32)isr_table[i], 0x08, 0x8E);
+    // Install ISR 0-31
+    for (u32 i = 0; i < ISR_COUNT; i++) {
+        set_idt_entry(
+            i, (u32)isr_table[i], KERNEL_CODE_SELECTOR, IDT_INTERRUPT_GATE);
+    }
 
-    // Set irq
-    for (int i = 0; i < 16; i++)
-        set_idt_entry(0x20 + i, (u32)irq_table[i], 0x08, 0x8E);
+    // Install IRQ 32-47
+    for (u32 i = 0; i < IRQ_COUNT; i++) {
+        set_idt_entry(IRQ_BASE_VECTOR + i,
+                      (u32)irq_table[i],
+                      KERNEL_CODE_SELECTOR,
+                      IDT_INTERRUPT_GATE);
+    }
 
     __asm__ volatile("lidt (%0)" : : "r"(&idt_p));
 }

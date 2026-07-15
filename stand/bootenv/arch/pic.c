@@ -2,41 +2,46 @@
 #include "arch/io.h"
 #include "utils/types.h"
 
-#define PIC_MASTER_COMMAND 0x20
-#define PIC_MASTER_DATA 0x21
-#define PIC_SLAVE_COMMAND 0xA0
-#define PIC_SLAVE_DATA 0xA1
+constexpr u16 PIC_MASTER_COMMAND = 0x20u;
+constexpr u16 PIC_MASTER_DATA = 0x21u;
 
-#define INIT_AND_WAIT_ICW4 0x11
+constexpr u16 PIC_SLAVE_COMMAND = 0xA0u;
+constexpr u16 PIC_SLAVE_DATA = 0xA1u;
 
-#define OFFSET_MASTER 0x20
-#define OFFSET_SLAVE 0x28
+constexpr u8 ICW1_INIT_ICW4 = 0x11u;
+constexpr u8 ICW4_8086_MODE = 0x01u;
+
+constexpr u8 OFFSET_MASTER = 0x20u;
+constexpr u8 OFFSET_SLAVE = 0x28u;
+
+constexpr u8 PIC_SLAVE_IRQ_LINE = 0x04u;
+constexpr u8 PIC_SLAVE_CASCADE_ID = 0x02u;
 
 static void pic_remap(void)
 {
-    // Save the mask
-    u8 mask1 = inb(PIC_MASTER_DATA);
-    u8 mask2 = inb(PIC_SLAVE_DATA);
+    // Save masks
+    const u8 master_mask = inb(PIC_MASTER_DATA);
+    const u8 slave_mask = inb(PIC_SLAVE_DATA);
 
-    // Send ICW1
-    outb(PIC_MASTER_COMMAND, INIT_AND_WAIT_ICW4);
-    outb(PIC_SLAVE_COMMAND, INIT_AND_WAIT_ICW4);
+    // ICW1: initialize PIC and expect ICW4
+    outb(PIC_MASTER_COMMAND, ICW1_INIT_ICW4);
+    outb(PIC_SLAVE_COMMAND, ICW1_INIT_ICW4);
 
-    // Send ICW2
+    // ICW2: interrupt vector offsets
     outb(PIC_MASTER_DATA, OFFSET_MASTER);
     outb(PIC_SLAVE_DATA, OFFSET_SLAVE);
 
-    // Send ICW3
-    outb(PIC_MASTER_DATA, 0x04);
-    outb(PIC_SLAVE_DATA, 0x02);
+    // ICW3: cascade configuration
+    outb(PIC_MASTER_DATA, PIC_SLAVE_IRQ_LINE);
+    outb(PIC_SLAVE_DATA, PIC_SLAVE_CASCADE_ID);
 
-    // Send ICW4 ( set 8080 mode)
-    outb(PIC_MASTER_DATA, 0x01);
-    outb(PIC_SLAVE_DATA, 0x01);
+    // ICW4: 8086 mode
+    outb(PIC_MASTER_DATA, ICW4_8086_MODE);
+    outb(PIC_SLAVE_DATA, ICW4_8086_MODE);
 
-    // Restore mask
-    outb(PIC_MASTER_DATA, mask1);
-    outb(PIC_SLAVE_DATA, mask2);
+    // Restore masks
+    outb(PIC_MASTER_DATA, master_mask);
+    outb(PIC_SLAVE_DATA, slave_mask);
 }
 
 void pic_init(void)

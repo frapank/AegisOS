@@ -22,18 +22,15 @@
 #include "arch/io.h"
 
 /* Modificators */
-#define SC_LSHIFT 0x2A
-#define SC_RSHIFT 0x36
-#define SC_CTRL 0x1D
-#define SC_ALT 0x38
-#define SC_CAPS 0x3A
+constexpr u8 SC_LSHIFT = 0x2A;
+constexpr u8 SC_RSHIFT = 0x36;
 
 /* State of modifier keys */
 static volatile int shift_down = 0;
 static volatile int ctrl_down = 0;
 
 /* Ring */
-#define KEYBOARD_BUFFER_LIMIT 255
+constexpr u16 KEYBOARD_BUFFER_LIMIT = 255;
 
 static volatile u16 kbd_keys[KEYBOARD_BUFFER_LIMIT];
 static volatile u16 kbd_head = 0; // Next slot to write
