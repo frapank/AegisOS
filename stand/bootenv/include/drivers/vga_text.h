@@ -1,10 +1,10 @@
 #pragma once
 
 #include "utils/types.h"
-#define VIDEO_MEMORY 0xb8000
-#define VGA_WIDTH 80
-#define VGA_HEIGHT 25
-#define DEFAULT_ATT 0
+constexpr u32 VIDEO_MEMORY = 0xb8000;
+constexpr u32 VGA_WIDTH = 80u;
+constexpr u32 VGA_HEIGHT = 25u;
+constexpr u8 DEFAULT_ATT = 0u;
 
 enum vga_color {
     VGA_COLOR_BLACK         = 0,

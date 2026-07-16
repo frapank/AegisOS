@@ -6,12 +6,12 @@
 #include "utils/types.h"
 
 #define KERNEL_PATH "boot/lain_kernel.bin"
-#define KERNEL_LOAD_ADDR 0x100000u
-#define KERNEL_MAX_SIZE (4u * 1024u * 1024u)
+constexpr u32 KERNEL_LOAD_ADDR = 0x100000u;
+constexpr u32 KERNEL_MAX_SIZE = 4u * 1024u * 1024u;
 
 // Layout defined in loader.asm
-#define E820_DATA_ADDR 0x0500u
-#define E820_MAX_ENTRIES 12
+constexpr u32 E820_DATA_ADDR = 0x0500u;
+constexpr u32 E820_MAX_ENTRIES = 12u;
 
 typedef struct [[gnu::packed]] {
     u32 count;

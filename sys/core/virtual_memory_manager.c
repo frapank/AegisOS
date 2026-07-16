@@ -2,9 +2,9 @@
 
 #include "utils/types.h"
 
-#define PAGE_SIZE_BYTE 4096
-#define TABLE_IN_DIR 1024
-#define PAGE_IN_TABLE 1024
+[[maybe_unused]] constexpr u32 PAGE_SIZE_BYTE = 4096u;
+constexpr u32 TABLE_IN_DIR = 1024u;
+constexpr u32 PAGE_IN_TABLE = 1024u;
 
 typedef u32 ptable_entry;
 typedef u32 pdir_entry;
