@@ -13,8 +13,8 @@ static void default_irq_handler(struct regs* regs)
 }
 
 #define DECLARE_DEFAULT_IRQ(n)                                                 \
-    void irq##n##_man(struct regs* r)                                          \
-        __attribute__((alias("default_irq_handler")))
+    [[gnu::alias("default_irq_handler")]]                                      \
+    void irq##n##_man(struct regs* r)
 
 DECLARE_DEFAULT_IRQ(0);
 DECLARE_DEFAULT_IRQ(2);
@@ -44,7 +44,7 @@ static void (*const irq_handlers[IRQ_COUNT])(struct regs*) = {
     irq12_man, irq13_man, irq14_man, irq15_man
 };
 
-void __attribute__((cdecl)) i686_IRQ_Handler(struct regs* regs)
+[[gnu::cdecl]] void i686_IRQ_Handler(struct regs* regs)
 {
     u8 irq = (u8)regs->int_no;
 

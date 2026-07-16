@@ -57,18 +57,18 @@ IRQ_DECLARE(13);
 IRQ_DECLARE(14);
 IRQ_DECLARE(15);
 
-struct idt_entry {
+struct [[gnu::packed]] idt_entry {
     u16 offset_low;
     u16 selector;
     u8 zero;
     u8 type_attr;
     u16 offset_high;
-} __attribute__((packed));
+};
 
-struct idt_pointer {
+struct [[gnu::packed]] idt_pointer {
     u16 limit;
     u32 base;
-} __attribute__((packed));
+};
 
 constexpr u32 IDT_ENTRIES = 256u;
 constexpr u32 ISR_COUNT = 32u;
