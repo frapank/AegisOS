@@ -1,7 +1,6 @@
 #pragma once
 
 #include "utils/types.h"
-#include "utils/safety.h"
 
 bool phmm_is_address_free(u32 address);
 void phmm_mark_region_used(u32 init_address, u32 size);

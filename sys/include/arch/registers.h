@@ -16,7 +16,7 @@
 //   mov eax, esp
 //   push eax
 
-typedef struct regs {
+typedef struct [[gnu::packed]] regs {
     u32 gs;
     u32 fs;
     u32 es;
@@ -39,4 +39,4 @@ typedef struct regs {
     u32 eflags;
     u32 useresp;
     u32 ss;
-} __attribute__((packed)) regs_t;
+} regs_t;

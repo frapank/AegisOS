@@ -42,9 +42,8 @@ static const char* const exception_names[CPU_EXCEPTION_COUNT] = {
 };
 
 #define DECLARE_DEFAULT_ISR(n)                                                 \
-    [[noreturn]]                                                               \
-    void isr##n##_man(struct regs* r)                                          \
-        __attribute__((alias("default_isr_handler")))
+    [[noreturn, gnu::alias("default_isr_handler")]]                            \
+    void isr##n##_man(struct regs* r)
 
 DECLARE_DEFAULT_ISR(0);
 DECLARE_DEFAULT_ISR(1);
@@ -96,7 +95,7 @@ static void default_isr_handler(struct regs* regs)
         ;
 }
 
-void __attribute__((cdecl)) i686_ISR_Handler(struct regs* regs)
+[[gnu::cdecl]] void i686_ISR_Handler(struct regs* regs)
 {
     const u8 num = regs->int_no;
 
