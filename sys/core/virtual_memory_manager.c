@@ -11,7 +11,7 @@ typedef u32 pdir_entry;
 typedef u32 physical_address;
 typedef u32 virtual_address;
 
-enum PAGE_TABLE_FLAGS {
+enum PAGE_TABLE_FLAGS : u32 {
     PT_PRESENT = 0x01,
     PT_READ_WRITE = 0x02,
     PT_USER = 0x04,
@@ -24,7 +24,7 @@ enum PAGE_TABLE_FLAGS {
     PT_FRAME = 0x7FFFF000,
 };
 
-enum PAGE_DIR_FLAGS {
+enum PAGE_DIR_FLAGS : u32 {
     PD_PRESENT = 0x01,
     PD_READ_WRITE = 0x02,
     PD_USER = 0x04,
