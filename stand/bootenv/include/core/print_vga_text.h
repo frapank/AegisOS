@@ -3,8 +3,8 @@
 #include "drivers/vga_text.h"
 
 struct line_data {
-    int x;
-    int y;
+    u32 x;
+    u32 y;
 };
 
 void printk(char *msg, ...);

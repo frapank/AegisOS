@@ -3,8 +3,8 @@
 #include "core/format.h"
 #include "core/memory.h"
 
-#define DEFAULT_BACKGROUND_COLOR 0
-#define DEFAULT_TEXT_COLOR 15
+constexpr u32 DEFAULT_BACKGROUND_COLOR = 0;
+constexpr u32 DEFAULT_TEXT_COLOR = 15;
 
 static struct line_data cursor = { 0, 0 };
 
@@ -153,7 +153,7 @@ static void scroll_if_needed(void)
 
     u16* vga = (u16*)VIDEO_MEMORY;
 
-    int lines = cursor.y - (VGA_HEIGHT - 1);
+    u32 lines = cursor.y - (VGA_HEIGHT - 1);
     if (lines <= 0)
         return;
     if (lines > VGA_HEIGHT)
@@ -170,7 +170,7 @@ static void scroll_if_needed(void)
     u16 blank = (' ' | (att << 8));
 
     u16* last_row = vga + (VGA_HEIGHT - lines) * VGA_WIDTH;
-    for (int r = 0; r < lines; r++)
+    for (u32 r = 0; r < lines; r++)
         kmemset16(last_row + r * VGA_WIDTH, blank, VGA_WIDTH);
 
     cursor.y = VGA_HEIGHT - 1;

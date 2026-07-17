@@ -7,7 +7,7 @@
 #define EXT2_NDIR_BLOCKS 12u
 #define EXT2_IND_BLOCK 12u
 
-typedef struct {
+typedef struct [[gnu::packed]] {
     u32 s_inodes_count;
     u32 s_blocks_count;
     u32 s_r_blocks_count;
@@ -36,9 +36,9 @@ typedef struct {
     // dynamic-revision fields (valid when s_rev_level >= 1)
     u32 s_first_ino;
     u16 s_inode_size;
-} __attribute__((packed)) ext2_sb_t;
+} ext2_sb_t;
 
-typedef struct {
+typedef struct [[gnu::packed]] {
     u32 bg_block_bitmap;
     u32 bg_inode_bitmap;
     u32 bg_inode_table;
@@ -47,9 +47,9 @@ typedef struct {
     u16 bg_used_dirs_count;
     u16 bg_pad;
     u8 bg_reserved[12];
-} __attribute__((packed)) ext2_bgd_t;
+} ext2_bgd_t;
 
-typedef struct {
+typedef struct [[gnu::packed]] {
     u16 i_mode;
     u16 i_uid;
     u32 i_size;
@@ -68,15 +68,15 @@ typedef struct {
     u32 i_dir_acl;
     u32 i_faddr;
     u8 i_osd2[12];
-} __attribute__((packed)) ext2_inode_t;
+} ext2_inode_t;
 
-typedef struct {
+typedef struct [[gnu::packed]] {
     u32 inode;
     u16 rec_len;
     u8 name_len;
     u8 file_type;
     char name[255]; // NOT null-terminated on disk
-} __attribute__((packed)) ext2_dirent_t;
+} ext2_dirent_t;
 
 // Driver state
 static u32 g_part_lba;

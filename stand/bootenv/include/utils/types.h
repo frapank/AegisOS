@@ -11,18 +11,6 @@ typedef signed int         s32;
 typedef unsigned long long u64;
 typedef signed long long   s64;
 
-/* Bool types */
-typedef _Bool bool;
-#ifndef true
-#define true 1
-#endif
-#ifndef false
-#define false 0
-#endif
-
-/* Null type */
-#define NULL ((void*)0)
-
 /* Size type */
 #if defined(__SIZE_TYPE__)
 typedef __SIZE_TYPE__ size_t;

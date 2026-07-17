@@ -2,17 +2,16 @@
 
 #include "utils/types.h"
 
-#define ALIGN(size) __attribute__((aligned(size)))
-#define PAGE_SIZE_BYTE 4096
-#define TABLE_IN_DIR 1024
-#define PAGE_IN_TABLE 1024
+[[maybe_unused]] constexpr u32 PAGE_SIZE_BYTE = 4096u;
+constexpr u32 TABLE_IN_DIR = 1024u;
+constexpr u32 PAGE_IN_TABLE = 1024u;
 
 typedef u32 ptable_entry;
 typedef u32 pdir_entry;
 typedef u32 physical_address;
 typedef u32 virtual_address;
 
-enum PAGE_TABLE_FLAGS {
+enum PAGE_TABLE_FLAGS : u32 {
     PT_PRESENT = 0x01,
     PT_READ_WRITE = 0x02,
     PT_USER = 0x04,
@@ -25,7 +24,7 @@ enum PAGE_TABLE_FLAGS {
     PT_FRAME = 0x7FFFF000,
 };
 
-enum PAGE_DIR_FLAGS {
+enum PAGE_DIR_FLAGS : u32 {
     PD_PRESENT = 0x01,
     PD_READ_WRITE = 0x02,
     PD_USER = 0x04,

@@ -6,29 +6,29 @@
 #include "utils/types.h"
 
 #define KERNEL_PATH "boot/lain_kernel.bin"
-#define KERNEL_LOAD_ADDR 0x100000u
-#define KERNEL_MAX_SIZE (4u * 1024u * 1024u)
+constexpr u32 KERNEL_LOAD_ADDR = 0x100000u;
+constexpr u32 KERNEL_MAX_SIZE = 4u * 1024u * 1024u;
 
 // Layout defined in loader.asm
-#define E820_DATA_ADDR 0x0500u
-#define E820_MAX_ENTRIES 12
+constexpr u32 E820_DATA_ADDR = 0x0500u;
+constexpr u32 E820_MAX_ENTRIES = 12u;
 
-typedef struct {
+typedef struct [[gnu::packed]] {
     u32 count;
     struct memory_map entries[E820_MAX_ENTRIES];
-} __attribute__((packed)) e820_data_t;
+} e820_data_t;
 
 // boot_info for the kernel
 static struct boot_info g_boot_info;
 
-typedef struct {
+typedef struct [[gnu::packed]] {
     u8 status;
     u8 chs_first[3];
     u8 type;
     u8 chs_last[3];
     u32 lba_start;
     u32 lba_size;
-} __attribute__((packed)) mbr_part_t;
+} mbr_part_t;
 
 static u32 get_part2_lba(void)
 {

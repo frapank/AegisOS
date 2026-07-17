@@ -105,10 +105,10 @@ EOF
         exit 1
     fi
 
-    if "$GCC" -ffreestanding -std=c17 -c test.c -o test.o >/dev/null 2>&1; then
-        GCC_FLAGS="$GCC_FLAGS -std=c17"
+    if "$GCC" -ffreestanding -std=c23 -c test.c -o test.o >/dev/null 2>&1; then
+        GCC_FLAGS="$GCC_FLAGS -std=c23"
     else
-        log_error "$GCC doesn't support -std=c17" >&2
+        log_error "$GCC doesn't support -std=c23" >&2
         rm -f test.o test.c "$MK"
         exit 1
     fi

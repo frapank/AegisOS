@@ -6,7 +6,7 @@ constexpr u32 VGA_WIDTH = 80;
 constexpr u32 VGA_HEIGHT = 25;
 constexpr u8 DEFAULT_ATT = 0;
 
-enum vga_color : u8 {
+enum vga_color {
     VGA_COLOR_BLACK         = 0,
     VGA_COLOR_BLUE          = 1,
     VGA_COLOR_GREEN         = 2,
