@@ -90,7 +90,7 @@ static void cmd_help_local(struct kernel_context* ctx)
     }
 }
 
-#define COMMAND_MAX_INPUT 10
+constexpr size_t COMMAND_MAX_INPUT = 10u;
 #define PRINT_PREFIX printk("$ ")
 
 static volatile int running = 0;
